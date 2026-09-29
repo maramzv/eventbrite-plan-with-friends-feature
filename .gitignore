@@ -22,3 +22,6 @@ Thumbs.db
 
 # Vite
 .vite/
+
+# Local-only notes for Claude, not shared with collaborators
+/docs/
