@@ -1,0 +1,80 @@
+{
+  "paid": {
+    "title": "Rollingween : 5th Annual New York Halloween Party",
+    "subtitle": "October 31 · 10pm - November 1 · 4am EDT",
+    "primaryButton": "Continue",
+    "image": "https://img.evbuc.com/https%3A%2F%2Fcdn.evbuc.com%2Fimages%2F1190978192%2F330313065629%2F1%2Flogo.20260813-134952?w=720&auto=format%2Ccompress&q=75&sharp=10&s=dcbe852e1f76fcd9fb5ebcdc9a553d08",
+    "tickets": [
+      {
+        "name": "Early Bird Admission",
+        "price": "$22.35",
+        "originalPrice": null,
+        "fee": "incl. $2.35 Fee",
+        "salesEnd": "Sales end on Oct 30, 2026",
+        "pills": [
+          "Sales end on Oct 30, 2026"
+        ],
+        "description": "Early Bird Admission grants general entry to the Halloween Party - Rollingween . This ticket is available in limited quantity and at a discounted rate for e…See more"
+      },
+      {
+        "name": "General Admission Tier 1",
+        "price": "$27.63",
+        "originalPrice": null,
+        "fee": "incl. $2.63 Fee",
+        "salesEnd": "Sales end on Oct 31, 2026",
+        "pills": [
+          "Sales end on Oct 31, 2026"
+        ],
+        "description": "General Admission Tier 1 provides standard entry to ROLLINGWEEN. ( ALL SALES ARE FINALS )"
+      },
+      {
+        "name": "General Admission Tier 2",
+        "price": "$32.90",
+        "originalPrice": null,
+        "fee": "incl. $2.90 Fee",
+        "salesEnd": "Sales end on Oct 31, 2026",
+        "pills": [
+          "Sales end on Oct 31, 2026"
+        ],
+        "description": "General Admission Tier 2 provides standard entry . ( ALL SALES ARE FINALS )"
+      },
+      {
+        "name": "Early Bird Admission (2 for 1 deal)",
+        "price": "$11.80$21.80",
+        "originalPrice": "$21.80",
+        "fee": "incl. $1.80 Fee",
+        "salesEnd": null,
+        "pills": [
+          "2 for 1 deal"
+        ],
+        "description": "Special offer: Bring a friend with you for free. Add to your cart to get two tickets for the price of one."
+      }
+    ],
+    "eyeOnThis": "121 people have their eye on this",
+    "refundTitle": "Easy refunds",
+    "refundText": "$0.00 You won't be charged yet Continue You won't be charged yet",
+    "calendar": {
+      "months": [],
+      "enabled": []
+    }
+  },
+  "multidate": {
+    "title": null,
+    "subtitle": null,
+    "primaryButton": null,
+    "image": "https://img.evbuc.com/https%3A%2F%2Fcdn.evbuc.com%2Fimages%2F1176979530%2F48251508672%2F1%2Flogo.20260208-040403?w=720&auto=format%2Ccompress&q=75&sharp=10&s=5344633960fd05f2b7cf5825927c72ad",
+    "tickets": [],
+    "eyeOnThis": null,
+    "refundTitle": null,
+    "refundText": null,
+    "calendar": {
+      "months": [
+        "October 2026",
+        "November 2026",
+        "December 2026",
+        "January 2027"
+      ],
+      "enabled": []
+    }
+  }
+}
