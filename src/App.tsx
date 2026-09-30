@@ -2,6 +2,7 @@ import { useEffect } from 'react'
 import { Route, Routes, useLocation } from 'react-router-dom'
 import { EventPage } from './pages/EventPage'
 import { Home } from './pages/Home'
+import { Intro } from './pages/Intro'
 import { NotFound } from './pages/NotFound'
 
 function HomeTitle() {
@@ -21,6 +22,7 @@ export default function App() {
       <HomeTitle />
       <Routes>
         <Route path="/" element={<Home />} />
+        <Route path="/intro" element={<Intro />} />
         <Route path="/e/:slug" element={<EventPage />} />
         <Route path="*" element={<NotFound />} />
       </Routes>

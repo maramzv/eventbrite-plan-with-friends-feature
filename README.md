@@ -20,12 +20,12 @@ npm run dev
 
 Then open http://localhost:5173.
 
-Working from a tablet? Open the repo in **GitHub Codespaces** (Code → Codespaces → Create), then run the same two commands in its terminal.
 
 ## What's in the clone
 
 | Page | Route | Notes |
 |---|---|---|
+| Presentation intro | `/intro` | 5 slides for opening the demo (problem, research, solution). Arrow keys or buttons to move; "Start the demo" goes to the homepage. Not part of the Eventbrite clone. |
 | Homepage | `/` | Hero banner, category icons, "Browsing events in" bar + tabs, 16 event cards, Top destinations carousel, Popular cities / Explore by State / Things to do link rows, footer |
 | Event page | `/e/:slug` | Hero gallery, urgency tag, organizer, sticky price box, Overview (Read more), Lineup, Good to know, Location, FAQs, Organized by, More events from organizer, You might also like, tags, footer |
 | Ticket popup | opens from the price box | Ticket list with quantity steppers, promo code, order summary, refund box; date → time → tickets flow for multi-date events |
