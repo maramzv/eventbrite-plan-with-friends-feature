@@ -1,0 +1,169 @@
+PLAN WITH FRIENDS PRD - Michelle & Mara
+Product Requirements Document: New Feature
+
+Build name:  Plan with Friends
+Owner:  Michelle Sainsbury & Mara Munoz
+Date:  9/28/2026
+
+
+1. PROBLEM
+Eventbrite users who discover events they may want to attend with friends have no built-in way to coordinate interest or availability before registering. Because that decision-making happens outside of Eventbrite through texts, group chats, or other apps, users must leave the event experience to determine whether their group wants to attend. This creates friction between discovering an event and committing to registration.
+Supporting Context (optional)
+
+Eventbrite currently allows users to discover event details and register for events, but it does not provide a shared space for friends to coordinate interest or availability before registering.
+Users planning to attend an event together may need to leave Eventbrite and use texts, group chats, or other communication tools to decide who wants to attend.
+This creates a gap between discovering an event and committing to registration because the group-planning portion of the journey happens outside the Eventbrite experience.
+
+1a. Opportunity
+
+Plan with Friends creates an opportunity to keep users within the Eventbrite experience while they coordinate whether to attend an event together. By making group interest and availability visible before registration, Eventbrite can reduce friction between discovering an event and committing to attend.
+
+Market Opportunity
+
+According to Eventbrite’s 2026 Social Study, 79% of 18–35-year-olds surveyed in the U.S. and U.K. planned to attend more events in 2026. The study surveyed 4,051 people ages 18–35 in July 2025, demonstrating strong interest in live-event attendance among younger adults. (Eventbrite, 2026)
+A 2020 study of adolescent music-event attendance found that 94% of respondents reported attending gigs or concerts with close friends, while 19% reported attending alone, demonstrating the social role that friends can play in live-event attendance.
+(Sustainability, 2020)
+
+Eventbrite’s 2026 Social Study also found that 69% of respondents rely on personal networks and word-of-mouth to discover experiences, providing additional support for integrating social decision-making into the event experience. (Eventbrite, 2026)
+
+1b. Users & Needs
+
+Primary user(s):  Eventbrite users who discover events they are interested in attending with friends but want to know whether their friends are interested and available before registering.
+
+Secondary users:  Friends invited to a Plan with Friends group who need a quick, simple way to review the event and communicate whether they are interested and available without having to register first.
+
+Key User Needs
+As an Eventbrite user, I need to invite friends to consider an event with me because I may not want to commit to attending until I know who else is interested.
+
+As an Eventbrite user, I need to see my friends’ interest and availability in one place because coordinating across separate text messages or group chats makes the decision harder to track.
+
+As an invited friend, I need to quickly review the event and respond to the invitation because I want to participate in the group decision without having to register first.
+
+As an Eventbrite user, I need a clear path from group planning to registration because once my group decides to attend, I want to continue without restarting the event-discovery process.
+
+1c. Current User Journey
+1. User browses Eventbrite and discovers an event they may want to attend with friends.
+2. User opens the event details page to review the event.
+→ Problem: The user has no shared planning space within the event experience to determine whether friends are interested and available.
+3. User leaves Eventbrite and contacts friends through texts, group chats, or another communication app.
+→ Problem: Responses are scattered across another platform, separating group decision-making from the event itself.
+4. User determines whether the group wants to attend and returns to Eventbrite to register.
+→ Problem: The user must re-enter the Eventbrite experience after coordinating elsewhere before completing registration.
+
+
+2. PROPOSED SOLUTION
+
+Plan with Friends is a new Eventbrite planning experience that allows users to coordinate with friends before committing to an event. From an event they are considering, users can create a shared plan, invite friends, and see whether the group is interested and available to attend. Once the group is ready to move forward, users can continue from the shared plan toward event registration. As a result, users can make group attendance decisions without moving the planning process to separate text messages or group chats.
+
+2a. Value Proposition
+
+Eventbrite users who want to attend events with friends but struggle to coordinate interest and availability before registering can use Plan with Friends to make that decision together within the event experience. Unlike coordinating through separate texts or group chats, Plan with Friends provides one shared space to invite friends, view responses, and move directly toward registration once the group is ready.
+
+2b. Top 3 MVP Value Props
+
+The Vitamin  (must-have baseline):  Users can create a shared plan for an event, invite friends, and view their responses in one place.
+
+The Painkiller  (solves the core pain):  Users can coordinate interest and availability without leaving the event experience for separate texts or group chats.
+
+The Steroid  (the magic moment):  Users can see the group’s responses together and move directly from deciding as a group toward event registration.
+
+2c. Goals & Non-Goals
+
+Goals
+Reduce the friction users experience when coordinating with friends before committing to an event.
+Keep group event-planning decisions connected to the Eventbrite experience rather than requiring users to coordinate across separate platforms.
+Help users understand their group’s interest and availability before deciding whether to register.
+Create a clear transition from group decision-making to event registration.
+
+Non-Goals
+Build a full messaging, group-chat, or social networking platform; the MVP is focused specifically on pre-registration event coordination.
+Replace Eventbrite’s existing registration and ticketing experience; Plan with Friends leads users back into the existing registration flow.
+Build advanced scheduling, calendar coordination, or event-recommendation tools; these are outside the scope of this MVP.
+
+2d. Success Metrics
+
+Goal
+Signal
+Metric
+Target
+Reduce friction when coordinating with friends before committing to an event
+Users successfully complete the planning flow
+% of created plans that receive at least one friend response
+≥70%
+Keep group event planning connected to the Eventbrite experience
+Users use Plan with Friends instead of abandoning the flow
+% of users who create a plan and remain in the planning flow through group responses
+≥60%
+Help users understand their group’s interest and availability
+Invited friends submit responses
+% of invited friends who submit an interest and availability response
+≥60%
+Create a clear transition from group decision-making to registration
+Users proceed toward registration after reviewing group responses
+% of plans with responses that continue to registration
+≥40%
+
+
+3. REQUIREMENTS
+User Journey 1: Event attendee creates a plan with friends
+
+Context:  An Eventbrite user finds an event they may want to attend with friends and wants to coordinate the group’s interest and availability before committing to registration.
+
+
+Sub-journey 1: Starting a Plan with Friends
+[P0]  User can start a Plan with Friends from the event details page.
+[P0]  User can create a plan that is connected to the selected event.
+[P0]  User can view the event name, date, time, and location within the plan.
+[P1]  User can return from the planning space to the full event details.
+[P2]  User can add a short note to the group when creating the plan.
+
+Sub-journey 2: Inviting Friends
+[P0]  User can add friends to the event plan.
+[P0]  User can generate or share an invitation that allows friends to access the plan.
+[P1]  User can see which friends have been invited.
+[P1]  User can see which invited friends have responded.
+[P2]  User can resend an invitation to a friend who has not responded.
+
+Sub-journey 3: Reviewing responses and deciding to attend
+[P0]  User can view each friend’s interest response in the shared plan.
+[P0]  User can view each friend’s availability response.
+[P0]  User can continue from the group plan toward event registration.
+[P1]  User can see a summary of the group’s responses.
+
+User Journey 2: Invited friend responds to an event plan
+
+Context:  A friend receives an invitation to consider an event and needs a quick way to understand the event, indicate whether they are interested and available, and participate in the group decision before registering.
+
+Sub-journey 1: Reviewing the invitation
+[P0]  User can open the shared Plan with Friends invitation.
+[P0]  User can view the event name, date, time, and location before responding.
+[P1]  User can view who invited them to the plan.
+[P1]  User can access the full event details if they need more information.
+[P2]  User can view which other friends have been invited.
+
+Sub-journey 2: Responding to the plan
+[P0]  User can indicate whether they are interested in attending the event.
+[P0]  User can indicate whether they are available for the event date and time.
+[P1]  User can change their response after submitting it.
+[P1]  User can view the group's current responses after responding.
+
+
+4. APPENDIX
+
+Supporting Research
+
+Eventbrite’s 2026 Social Study reported that 79% of 18–35-year-olds planned to attend more events in 2026, supporting continued demand for in-person event experiences. (EventBrite)
+
+Research on live music attendance found that 94% of respondents reported attending gigs/concerts with close friends, supporting the importance of social relationships in event attendance. (MDPI)
+
+Additional qualitative research found that attending with friends can encourage commitment and that people use messaging groups to coordinate event plans.
+
+Open Questions
+
+What is the simplest invitation method for the MVP: shareable link, email invitation, or both?
+
+Should invited friends be required to sign in before responding, or should they be able to respond through the shared invitation?
+
+What response options best communicate interest and availability without making the planning flow too complicated?
+
+How long should a Plan with Friends remain active before the event occurs?
