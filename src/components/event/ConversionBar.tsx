@@ -26,13 +26,25 @@ export function ConversionBar({ event, onCheckout }: { event: EbEvent; onCheckou
           <div className="text-base text-eb-ink">{headline}</div>
           <div className="text-[15px] leading-5 text-eb-gray">{date}</div>
         </div>
-        <button
-          type="button"
-          onClick={opensCheckout ? onCheckout : undefined}
-          className="h-11 shrink-0 rounded border-[1.6px] border-transparent bg-eb-orange px-3 text-lg leading-5 font-medium text-white"
-        >
-          {label}
-        </button>
+        <div className="flex shrink-0 flex-col gap-2">
+          <button
+            type="button"
+            onClick={opensCheckout ? onCheckout : undefined}
+            className="h-11 rounded border-[1.6px] border-transparent bg-eb-orange px-3 text-lg leading-5 font-medium whitespace-nowrap text-white"
+          >
+            {label}
+          </button>
+          <button
+            type="button"
+            onClick={() => {
+              // Temporary until the Plan with Friends flow is built.
+              window.alert('Plan with Friends is coming soon.')
+            }}
+            className="h-11 rounded border-[1.6px] border-[rgba(145,141,153,0.1)] bg-[rgba(145,141,153,0.1)] px-3 text-lg leading-5 font-medium whitespace-nowrap text-eb-purple"
+          >
+            Plan with Friends
+          </button>
+        </div>
       </div>
     </div>
   )
