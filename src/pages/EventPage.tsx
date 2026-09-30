@@ -1,0 +1,159 @@
+import { useEffect, useState } from 'react'
+import { useParams } from 'react-router-dom'
+import { EventFooter } from '../components/EventFooter'
+import { Header } from '../components/Header'
+import { Svg } from '../components/Svg'
+import { CheckoutModal } from '../components/checkout/CheckoutModal'
+import { ConversionBar } from '../components/event/ConversionBar'
+import { Divider, Faqs, GoodToKnow, Lineup, Location, TagPills } from '../components/event/DetailSections'
+import { EventHero } from '../components/event/EventHero'
+import { EventList } from '../components/event/EventList'
+import { OrganizedBy } from '../components/event/OrganizedBy'
+import { OrganizerAvatar } from '../components/event/OrganizerAvatar'
+import { Overview } from '../components/event/Overview'
+import { UrgencyTag } from '../components/event/UrgencyTag'
+import { getEventBySlug, icons, type EbEvent } from '../data'
+import { compactNumber } from '../utils/format'
+import { NotFound } from './NotFound'
+
+function OrganizerInfo({ event }: { event: EbEvent }) {
+  const { organizer, followers, topOrganizer } = event
+  const stats = [
+    followers && `${followers} followers`,
+    organizer.numEvents != null && `${organizer.numEvents} events`,
+    organizer.hostingSince != null && `${organizer.hostingSince}y hosting`,
+    organizer.totalAttendees != null && `${compactNumber(organizer.totalAttendees)} total attendees`,
+  ].filter(Boolean)
+
+  return (
+    <div className="mt-3 flex flex-wrap items-center gap-4">
+      <OrganizerAvatar src={organizer.image} top={topOrganizer} />
+      <div className="min-w-0">
+        {topOrganizer && (
+          <p className="text-[13.5px] leading-[18px] font-semibold tracking-[0.2px] text-eb-gray uppercase">
+            Top Organizer
+          </p>
+        )}
+        <p className="text-lg leading-6 text-eb-gray">
+          by <a className="cursor-pointer font-medium text-eb-ink">{organizer.name}</a>
+        </p>
+        <p className="text-[15px] leading-5 text-eb-gray">{stats.join('  •  ')}</p>
+      </div>
+      <button
+        type="button"
+        className="h-[41px] w-[100px] rounded border border-[#dbdae3] text-[13.5px] font-medium text-eb-ink"
+      >
+        Follow
+      </button>
+    </div>
+  )
+}
+
+function EventDetails({ event }: { event: EbEvent }) {
+  const [venueName, city] = event.venueLine
+  return (
+    <div>
+      <h1 className="text-[32px] leading-[35.2px] font-bold text-eb-ink">{event.title}</h1>
+      <OrganizerInfo event={event} />
+      <ul className="mt-4 space-y-1.5 text-[15px] leading-5 tracking-[0.1px] text-eb-ink">
+        {venueName && (
+          <li className="flex items-center gap-2">
+            <Svg icon={event.icons.pin} className="size-4 shrink-0" />
+            <span>
+              {venueName}
+              {city && <span className="text-eb-gray"> · </span>}
+              {city}
+            </span>
+          </li>
+        )}
+        {event.dateLine[0] && (
+          <li className="flex items-center gap-2">
+            <Svg icon={event.icons.calendar} className="size-4 shrink-0" />
+            <span>{event.dateLine[0]}</span>
+          </li>
+        )}
+      </ul>
+    </div>
+  )
+}
+
+export function EventPage() {
+  const { slug } = useParams()
+  const event = getEventBySlug(slug)
+  const [checkoutOpen, setCheckoutOpen] = useState(false)
+
+  useEffect(() => {
+    if (event) document.title = `${event.title} Tickets, ${event.dateLine[0] ?? ''} | Eventbrite`
+    window.scrollTo(0, 0)
+  }, [event])
+
+  if (!event) return <NotFound />
+
+  return (
+    <>
+      <Header />
+      <main className="mx-auto max-w-[1200px] px-4 pt-8 pb-28 lg:px-0 lg:pb-0">
+        <EventHero images={event.images} title={event.title} />
+
+        <div className="mt-4 flex h-10 items-center justify-between">
+          <div>{event.urgency && <UrgencyTag label={event.urgency} />}</div>
+          <div className="flex text-eb-blue">
+            <button type="button" aria-label="Share this event" className="flex size-10 items-center justify-center rounded-full">
+              <Svg icon={event.icons.share} className="size-6" />
+            </button>
+            <button type="button" aria-label="Like event" className="flex size-10 items-center justify-center rounded-full">
+              <Svg icon={icons.like} className="size-6" />
+            </button>
+          </div>
+        </div>
+
+        <div className="mt-3 grid gap-10 lg:grid-cols-[700px_410px] lg:justify-between lg:gap-0">
+          <div className="min-w-0">
+            <EventDetails event={event} />
+            <Overview event={event} />
+            {event.lineup.length > 0 && (
+              <>
+                <Divider />
+                <Lineup event={event} />
+              </>
+            )}
+            {(event.highlights.length > 0 || event.refund) && (
+              <>
+                <Divider />
+                <GoodToKnow event={event} />
+              </>
+            )}
+            <Divider />
+            <Location event={event} />
+            {event.faqs.length > 0 && (
+              <>
+                <Divider />
+                <Faqs event={event} />
+              </>
+            )}
+            <OrganizedBy event={event} />
+            <EventList
+              title={`More events from ${event.organizer.name}`}
+              subtitle={`Discover more events from ${event.organizer.name}, ${
+                event.category ? `from ${event.category} ` : ''
+              }to other experiences you might love.`}
+              items={event.moreFromOrganizer}
+            />
+            <EventList
+              title="You might also like..."
+              subtitle="Browse more events with different dates, prices, and formats to find your next great experience."
+              items={event.related}
+            />
+            <TagPills event={event} />
+          </div>
+
+          <aside>
+            <ConversionBar event={event} onCheckout={() => setCheckoutOpen(true)} />
+          </aside>
+        </div>
+      </main>
+      <EventFooter />
+      {checkoutOpen && <CheckoutModal event={event} onClose={() => setCheckoutOpen(false)} />}
+    </>
+  )
+}
