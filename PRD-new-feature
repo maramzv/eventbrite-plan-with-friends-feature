@@ -114,6 +114,7 @@ Sub-journey 1: Starting a Plan with Friends
 [P0]  User can start a Plan with Friends from the event details page.
 [P0]  User can create a plan that is connected to the selected event.
 [P0]  User can view the event name, date, time, and location within the plan.
+[P0] User can view available group discount information within the plan.
 [P1]  User can return from the planning space to the full event details.
 [P2]  User can add a short note to the group when creating the plan.
 
