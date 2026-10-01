@@ -14,6 +14,7 @@ import { Overview } from '../components/event/Overview'
 import { UrgencyTag } from '../components/event/UrgencyTag'
 import { getEventBySlug, icons, type EbEvent } from '../data'
 import { compactNumber } from '../utils/format'
+import { createPlan } from '../utils/plans'
 import { NotFound } from './NotFound'
 
 function OrganizerInfo({ event }: { event: EbEvent }) {
@@ -81,6 +82,7 @@ export function EventPage() {
   const { slug } = useParams()
   const event = getEventBySlug(slug)
   const [checkoutOpen, setCheckoutOpen] = useState(false)
+  const [planCreated, setPlanCreated] = useState(false)
 
   useEffect(() => {
     if (event) document.title = `${event.title} Tickets, ${event.dateLine[0] ?? ''} | Eventbrite`
@@ -148,12 +150,47 @@ export function EventPage() {
           </div>
 
           <aside>
-            <ConversionBar event={event} onCheckout={() => setCheckoutOpen(true)} />
+            <ConversionBar
+              event={event}
+              onCheckout={() => setCheckoutOpen(true)}
+              onPlanWithFriends={() => {
+                createPlan(event.id)
+                setPlanCreated(true)
+              }}
+            />
           </aside>
         </div>
       </main>
       <EventFooter />
       {checkoutOpen && <CheckoutModal event={event} onClose={() => setCheckoutOpen(false)} />}
+      {planCreated && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4"
+          onClick={() => setPlanCreated(false)}
+        >
+          <div
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="plan-created-title"
+            onClick={(e) => e.stopPropagation()}
+            className="w-full max-w-md rounded bg-white p-8 shadow-[0_2px_8px_rgba(0,0,0,0.12)]"
+          >
+            <h2 id="plan-created-title" className="text-xl font-semibold text-eb-purple">
+              Plan created
+            </h2>
+            <p className="mt-3 text-[15px] leading-5 text-eb-gray">
+              Your Plan with Friends is saved and connected to this event.
+            </p>
+            <button
+              type="button"
+              onClick={() => setPlanCreated(false)}
+              className="mt-6 h-11 w-full rounded border-[1.6px] border-transparent bg-eb-orange px-3 text-lg leading-5 font-medium text-white"
+            >
+              Done
+            </button>
+          </div>
+        </div>
+      )}
     </>
   )
 }

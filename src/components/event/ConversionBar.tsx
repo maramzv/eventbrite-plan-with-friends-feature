@@ -3,7 +3,15 @@ import { Svg } from '../Svg'
 
 export const CHECKOUT_BUTTONS = new Set(['Get tickets', 'Reserve a spot', 'Check availability'])
 
-export function ConversionBar({ event, onCheckout }: { event: EbEvent; onCheckout: () => void }) {
+export function ConversionBar({
+  event,
+  onCheckout,
+  onPlanWithFriends,
+}: {
+  event: EbEvent
+  onCheckout: () => void
+  onPlanWithFriends: () => void
+}) {
   const { strip, headline, date, button } = event.conversion
   const soldOut = /sold out/i.test(strip ?? '')
   const label = button ?? (soldOut ? 'Explore similar events' : 'Get tickets')
@@ -36,10 +44,7 @@ export function ConversionBar({ event, onCheckout }: { event: EbEvent; onCheckou
           </button>
           <button
             type="button"
-            onClick={() => {
-              // Temporary until the Plan with Friends flow is built.
-              window.alert('Plan with Friends is coming soon.')
-            }}
+            onClick={onPlanWithFriends}
             className="h-11 rounded border-[1.6px] border-[rgba(145,141,153,0.1)] bg-[rgba(145,141,153,0.1)] px-3 text-lg leading-5 font-medium whitespace-nowrap text-eb-purple"
           >
             Plan with Friends
