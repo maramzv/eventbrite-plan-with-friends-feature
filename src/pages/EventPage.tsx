@@ -154,8 +154,8 @@ export function EventPage() {
               event={event}
               onCheckout={() => setCheckoutOpen(true)}
               onPlanWithFriends={() => {
-                createPlan(event.id)
-                setPlanCreated(true)
+                createPlan(event.id);
+                setPlanCreated(true);
               }}
             />
           </aside>
@@ -186,10 +186,10 @@ export function EventPage() {
 </p>
             <button
               type="button"
-              onClick={() => setPlanCreated(false)}
+              onClick={() => alert("Invite Friends coming next!")}
               className="mt-6 h-11 w-full rounded border-[1.6px] border-transparent bg-eb-orange px-3 text-lg leading-5 font-medium text-white"
             >
-              Done
+              Invite Friends
             </button>
           </div>
         </div>
