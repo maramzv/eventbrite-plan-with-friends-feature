@@ -2,6 +2,7 @@ export type FriendPlan = {
   id: string
   eventId: string
   createdAt: string
+  friends: string[]
 }
 
 const STORAGE_KEY = 'pwf-plans'
@@ -23,6 +24,7 @@ export function createPlan(eventId: string): FriendPlan {
     id: crypto.randomUUID(),
     eventId,
     createdAt: new Date().toISOString(),
+    friends: [],
   }
   const plans = readPlans()
   plans.push(plan)
