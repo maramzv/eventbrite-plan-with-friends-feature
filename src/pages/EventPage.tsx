@@ -180,7 +180,17 @@ export function EventPage() {
             </h2>
             <p className="mt-3 text-[15px] leading-5 text-eb-gray">
               Your Plan with Friends is saved and connected to this event.
+            </p> 
+            <p className="mt-3 text-[15px] leading-5 text-eb-gray">
+            {event.title}
+            <br />
+            {event.start}
+            <br />
+            {event.venue.name}, {event.venue.city}, {event.venue.region}
             </p>
+            
+            
+            <p className="mt-3 text-[15px] leading-5 text-eb-gray"></p>
             <p className="mt-3 text-[15px] leading-5 text-eb-gray">
   Group discount available for eligible group bookings.
 </p>
