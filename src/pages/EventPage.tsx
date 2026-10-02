@@ -83,6 +83,8 @@ export function EventPage() {
   const event = getEventBySlug(slug)
   const [checkoutOpen, setCheckoutOpen] = useState(false)
   const [planCreated, setPlanCreated] = useState(false)
+  const [inviteOpen, setInviteOpen] = useState(false)
+  
 
   useEffect(() => {
     if (event) document.title = `${event.title} Tickets, ${event.dateLine[0] ?? ''} | Eventbrite`
@@ -187,8 +189,8 @@ export function EventPage() {
             {event.start}
             <br />
             {event.venue.name}, {event.venue.city}, {event.venue.region}
-            </p>
             
+            </p>
             
             <p className="mt-3 text-[15px] leading-5 text-eb-gray"></p>
             <p className="mt-3 text-[15px] leading-5 text-eb-gray">
@@ -196,7 +198,7 @@ export function EventPage() {
 </p>
             <button
               type="button"
-              onClick={() => alert("Invite Friends coming next!")}
+              onClick={() => setInviteOpen(true)}                             
               className="mt-6 h-11 w-full rounded border-[1.6px] border-transparent bg-eb-orange px-3 text-lg leading-5 font-medium text-white"
             >
               Invite Friends
@@ -204,6 +206,25 @@ export function EventPage() {
           </div>
         </div>
       )}
-    </>
+ {inviteOpen && (
+  <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+    <div className="w-full max-w-md rounded-lg bg-white p-8 shadow-xl">
+      <h2 className="text-xl font-semibold">Invite Friends</h2>
+      <p className="mt-3 text-sm text-gray-600">
+        Share this plan with your friends.
+      </p>
+      <button
+        type="button"
+        onClick={() => setInviteOpen(false)}
+        className="mt-6 h-11 w-full rounded bg-eb-orange px-3 text-white"
+      >
+        Back
+      </button>
+    </div>
+  </div>
+)}
+       
+   
+        </>
   )
 }
