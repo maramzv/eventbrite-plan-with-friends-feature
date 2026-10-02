@@ -65,21 +65,21 @@ const SLIDES: Slide[] = [
     ),
   },
   {
-    bg: 'bg-eb-purple text-white',
+    bg: 'bg-eb-subtle text-eb-purple',
     content: (
       <>
-        <p className="text-lg font-semibold tracking-wide text-eb-orange2 uppercase">Why it matters</p>
-        <h2 className="mt-4 text-4xl leading-tight font-bold md:text-5xl">People go out with their people.</h2>
+        <p className="text-lg font-semibold tracking-wide text-eb-orange uppercase">Why it matters</p>
+        <h2 className="mt-4 text-4xl leading-tight font-bold md:text-5xl">Events are social. The planning should be too.</h2>
         <dl className="mt-12 grid gap-8 md:grid-cols-3">
           {[
             ['94%', 'attend concerts with close friends. Only 19% go alone.', 'Sustainability, 2020'],
             ['79%', 'of 18–35-year-olds plan to attend more events in 2026.', 'Eventbrite 2026 Social Study'],
             ['69%', 'rely on personal networks and word of mouth to discover experiences.', 'Eventbrite 2026 Social Study'],
           ].map(([n, text, source]) => (
-            <div key={n} className="rounded-2xl bg-white/10 p-6">
-              <dt className="text-6xl font-bold text-eb-orange2 md:text-7xl">{n}</dt>
+            <div key={n} className="rounded-2xl bg-white p-6 ring-1 ring-eb-line">
+              <dt className="text-6xl font-bold text-eb-orange md:text-7xl">{n}</dt>
               <dd className="mt-3 text-xl leading-snug">{text}</dd>
-              <dd className="mt-4 text-sm text-white/60">{source}</dd>
+              <dd className="mt-4 text-sm text-eb-gray">{source}</dd>
             </div>
           ))}
         </dl>
@@ -152,7 +152,7 @@ export function Intro() {
   }, [index, go])
 
   const slide = SLIDES[index]
-  const light = index === 1 || index === 3
+  const light = index >= 1 && index <= 3
 
   return (
     <div className={`relative flex min-h-dvh flex-col transition-colors duration-500 ${slide.bg}`}>
