@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { useParams } from 'react-router-dom'
+import { useParams, useSearchParams } from 'react-router-dom'
 import { EventFooter } from '../components/EventFooter'
 import { Header } from '../components/Header'
 import { Svg } from '../components/Svg'
@@ -14,7 +14,7 @@ import { Overview } from '../components/event/Overview'
 import { UrgencyTag } from '../components/event/UrgencyTag'
 import { getEventBySlug, icons, type EbEvent } from '../data'
 import { compactNumber } from '../utils/format'
-import { createPlan } from '../utils/plans'
+import { createPlan, getPlanById } from '../utils/plans'
 import { NotFound } from './NotFound'
 
 function OrganizerInfo({ event }: { event: EbEvent }) {
@@ -80,16 +80,30 @@ function EventDetails({ event }: { event: EbEvent }) {
 
 export function EventPage() {
   const { slug } = useParams()
+  const [searchParams] = useSearchParams()
   const event = getEventBySlug(slug)
+  
   const [checkoutOpen, setCheckoutOpen] = useState(false)
   const [planCreated, setPlanCreated] = useState(false)
   const [inviteOpen, setInviteOpen] = useState(false)
-  
+  const [planId, setPlanId] = useState<string | null>(null)
 
   useEffect(() => {
     if (event) document.title = `${event.title} Tickets, ${event.dateLine[0] ?? ''} | Eventbrite`
     window.scrollTo(0, 0)
   }, [event])
+
+  // Check URL for an incoming ?plan=<id> on page load
+  useEffect(() => {
+    const incomingPlanId = searchParams.get('plan')
+    if (incomingPlanId) {
+      const existingPlan = getPlanById(incomingPlanId)
+      if (existingPlan) {
+        setPlanId(existingPlan.id)
+        setPlanCreated(true) // Automatically show the Plan modal so the invited friend sees it
+      }
+    }
+  }, [searchParams])
 
   if (!event) return <NotFound />
 
@@ -156,8 +170,9 @@ export function EventPage() {
               event={event}
               onCheckout={() => setCheckoutOpen(true)}
               onPlanWithFriends={() => {
-                createPlan(event.id);
-                setPlanCreated(true);
+                const plan = createPlan(event.id)
+                setPlanId(plan.id)
+                setPlanCreated(true)
               }}
             />
           </aside>
@@ -184,18 +199,15 @@ export function EventPage() {
               Your Plan with Friends is saved and connected to this event.
             </p> 
             <p className="mt-3 text-[15px] leading-5 text-eb-gray">
-            {event.title}
-            <br />
-            {event.start}
-            <br />
-            {event.venue.name}, {event.venue.city}, {event.venue.region}
-            
+              {event.title}
+              <br />
+              {event.start}
+              <br />
+              {event.venue.name}, {event.venue.city}, {event.venue.region}
             </p>
-            
-            <p className="mt-3 text-[15px] leading-5 text-eb-gray"></p>
             <p className="mt-3 text-[15px] leading-5 text-eb-gray">
-  Group discount available for eligible group bookings.
-</p>
+              Group discount available for eligible group bookings.
+            </p>
             <button
               type="button"
               onClick={() => setInviteOpen(true)}                             
@@ -206,25 +218,33 @@ export function EventPage() {
           </div>
         </div>
       )}
- {inviteOpen && (
-  <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-    <div className="w-full max-w-md rounded-lg bg-white p-8 shadow-xl">
-      <h2 className="text-xl font-semibold">Invite Friends</h2>
-      <p className="mt-3 text-sm text-gray-600">
-        Share this plan with your friends.
-      </p>
-      <button
-        type="button"
-        onClick={() => setInviteOpen(false)}
-        className="mt-6 h-11 w-full rounded bg-eb-orange px-3 text-white"
-      >
-        Back
-      </button>
-    </div>
-  </div>
-)}
-       
-   
-        </>
+      {inviteOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+          <div className="w-full max-w-md rounded-lg bg-white p-8 shadow-xl">
+            <h2 className="text-xl font-semibold">Invite Friends</h2>
+            <p className="mt-3 text-sm text-gray-600">
+              Share this plan with your friends.
+            </p>
+            <button
+              type="button"
+              onClick={() => {
+                const inviteUrl = `${window.location.origin}${window.location.pathname}?plan=${planId}`
+                window.prompt("Copy this invitation link:", inviteUrl)
+              }}
+              className="mt-6 h-11 w-full rounded bg-orange-600 text-white font-semibold"
+            >
+              Copy Invitation Link
+            </button>
+            <button
+              type="button"
+              onClick={() => setInviteOpen(false)}
+              className="mt-6 h-11 w-full rounded bg-eb-orange px-3 text-white"
+            >
+              Back
+            </button>
+          </div>
+        </div>
+      )}
+    </>
   )
 }

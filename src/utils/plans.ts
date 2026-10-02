@@ -31,3 +31,9 @@ export function createPlan(eventId: string): FriendPlan {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(plans))
   return plan
 }
+
+/** Retrieves an existing plan by its ID. */
+export function getPlanById(id: string): FriendPlan | null {
+  const plans = readPlans()
+  return plans.find((p) => p.id === id) || null
+}
