@@ -305,44 +305,44 @@ export function EventPage() {
             aria-modal="true"
             aria-labelledby="organizer-prompt-title"
             onClick={(e) => e.stopPropagation()}
-            className="w-full max-w-md rounded bg-white p-8 shadow-[0_2px_8px_rgba(0,0,0,0.12)] relative"
+            className="w-full max-w-lg rounded-xl bg-white p-8 shadow-2xl relative"
           >
             <button
               type="button"
               onClick={() => setShowOrganizerPrompt(false)}
               aria-label="Close"
-              className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 text-xl font-bold"
+              className="absolute top-5 right-5 text-gray-400 hover:text-gray-600 text-xl font-bold"
             >
               ×
             </button>
-            <h2 id="organizer-prompt-title" className="text-xl font-semibold text-eb-purple">Start a Plan with Friends</h2>
-            <p className="mt-2 text-[15px] leading-5 text-eb-gray">
+            <h2 id="organizer-prompt-title" className="text-2xl font-bold text-eb-ink">Start a Plan with Friends</h2>
+            <p className="mt-2 text-sm text-gray-600">
               Enter your name and an optional note for your friends.
             </p>
-            <form onSubmit={handleStartPlan} className="mt-4 space-y-4">
+            <form onSubmit={handleStartPlan} className="mt-6 space-y-4">
               <div>
-                <label className="block text-xs font-semibold text-eb-ink uppercase mb-1">Your Name</label>
+                <label className="block text-xs font-semibold text-eb-ink uppercase tracking-wider mb-1.5">Your Name</label>
                 <input
                   type="text"
                   placeholder="e.g. Alex"
                   value={organizerName}
                   onChange={(e) => setOrganizerName(e.target.value)}
-                  className="w-full rounded border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:border-eb-orange"
+                  className="w-full rounded-lg border border-gray-300 px-3.5 py-2.5 text-sm focus:outline-none focus:border-eb-orange"
                   required
                 />
               </div>
               <div>
-                <label className="block text-xs font-semibold text-eb-ink uppercase mb-1">Note (Optional)</label>
+                <label className="block text-xs font-semibold text-eb-ink uppercase tracking-wider mb-1.5">Note (Optional)</label>
                 <textarea
                   placeholder="e.g. Let's grab dinner beforehand!"
                   value={planNote}
                   onChange={(e) => setPlanNote(e.target.value)}
-                  className="w-full rounded border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:border-eb-orange h-20 resize-none"
+                  className="w-full rounded-lg border border-gray-300 px-3.5 py-2.5 text-sm focus:outline-none focus:border-eb-orange h-24 resize-none"
                 />
               </div>
               <button
                 type="submit"
-                className="h-11 w-full rounded bg-eb-orange text-lg leading-5 font-medium text-white"
+                className="h-12 w-full rounded-lg bg-eb-orange text-base font-semibold text-white shadow-sm hover:bg-orange-600 transition-colors"
               >
                 Continue to Plan
               </button>
@@ -362,163 +362,150 @@ export function EventPage() {
             aria-modal="true"
             aria-labelledby="plan-created-title"
             onClick={(e) => e.stopPropagation()}
-            className="w-full max-w-md rounded bg-white p-8 shadow-[0_2px_8px_rgba(0,0,0,0.12)] max-h-[90vh] overflow-y-auto relative"
+            className="w-full max-w-xl rounded-xl bg-white p-8 shadow-2xl max-h-[90vh] overflow-y-auto relative"
           >
             <button
               type="button"
               onClick={() => setPlanCreated(false)}
               aria-label="Return to event details"
-              className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 text-xl font-bold"
+              className="absolute top-5 right-5 text-gray-400 hover:text-gray-600 text-xl font-bold"
             >
               ×
             </button>
-            <h2 id="plan-created-title" className="text-xl font-semibold text-eb-purple">
-              {isInvitedView ? `${inviterNameDisplay} invited you to a Plan with Friends!` : 'Plan created'}
+            <h2 id="plan-created-title" className="text-2xl font-bold text-eb-ink">
+              {isInvitedView ? `${inviterNameDisplay} invited you to a Plan with Friends!` : 'Plan with Friends'}
             </h2>
-            <p className="mt-3 text-[15px] leading-5 text-eb-gray">
+            <p className="mt-2 text-sm text-gray-600">
               {isInvitedView 
                 ? `${inviterNameDisplay} shared this plan with you for the following event:` 
-                : 'Your Plan with Friends is saved and connected to this event.'}
+                : 'Your plan is saved and connected to this event.'}
             </p> 
 
             {/* Display Plan Note if present */}
             {planNoteDisplay && (
-              <div className="mt-3 bg-orange-50 border border-orange-200 p-3 rounded text-xs text-eb-ink">
-                <span className="font-semibold text-eb-orange uppercase tracking-wider block mb-1">Note from {inviterNameDisplay}:</span>
-                <p className="italic">"{planNoteDisplay}"</p>
+              <div className="mt-4 bg-orange-50/80 border-l-4 border-eb-orange p-3.5 rounded-r-lg text-sm text-eb-ink shadow-sm">
+                <span className="font-semibold text-eb-orange text-xs uppercase tracking-wider block mb-1">Note from {inviterNameDisplay}:</span>
+                <p className="italic text-gray-700">"{planNoteDisplay}"</p>
               </div>
             )}
 
-            <p className="mt-3 text-[15px] leading-5 text-eb-gray">
-              {event.title}
-              <br />
-              {event.start}
-              <br />
-              {event.venue.name}, {event.venue.city}, {event.venue.region}
-            </p>
-            <p className="mt-3 text-[15px] leading-5 text-eb-gray">
-              Group discount available for eligible group bookings.
-            </p>
+            {/* Event Summary Card */}
+            <div className="mt-5 bg-gray-50 p-4 rounded-xl border border-gray-200/70 space-y-1">
+              <h3 className="font-bold text-base text-eb-ink">{event.title}</h3>
+              <p className="text-xs font-medium text-eb-gray">{event.start}</p>
+              <p className="text-xs text-gray-600">{event.venue.name}, {event.venue.city}, {event.venue.region}</p>
+              <p className="text-[11px] font-semibold text-eb-orange mt-1">Group discount available for eligible group bookings.</p>
+            </div>
 
-            {/* Invited Friend Interest & Availability Response Flow & Invited Friends List (P2 #3) */}
+            {/* Invited Friend Interest & Availability Response Flow & Invited Friends List */}
             {isInvitedView ? (
-              <div className="mt-6 border-t pt-4 space-y-4">
-                <h3 className="text-sm font-semibold text-eb-ink">Respond to this plan</h3>
-                {currentInvitedIndex !== null && friends[currentInvitedIndex] ? (
-                  <div className="mt-3 bg-gray-50 p-3 rounded space-y-3">
-                    <p className="text-xs text-gray-600">Responding as: <strong className="text-eb-ink">{friends[currentInvitedIndex].name}</strong></p>
-                    
-                    <div className="flex items-center justify-between text-xs pt-1">
-                      <span className="font-medium text-gray-700">Your Interest:</span>
-                      <div className="flex items-center gap-2">
-                        <span className={`px-2 py-0.5 rounded font-semibold ${
-                          friends[currentInvitedIndex].status === 'Going' ? 'bg-green-100 text-green-800' :
-                          friends[currentInvitedIndex].status === 'Interested' ? 'bg-blue-100 text-blue-800' :
-                          'bg-yellow-100 text-yellow-800'
-                        }`}>
-                          {friends[currentInvitedIndex].status}
-                        </span>
-                        <select
-                          value={friends[currentInvitedIndex].status}
-                          onChange={(e) => handleStatusChange(currentInvitedIndex, e.target.value as FriendStatus)}
-                          className="border rounded px-1.5 py-1 bg-white"
+              <div className="mt-6 border-t border-gray-200 pt-5 space-y-6">
+                <div>
+                  <h3 className="text-base font-bold text-eb-ink mb-3">Respond to this plan</h3>
+                  {currentInvitedIndex !== null && friends[currentInvitedIndex] ? (
+                    <div className="bg-gray-50 p-4 rounded-xl border border-gray-200 space-y-4">
+                      <div className="flex items-center justify-between text-xs">
+                        <span className="text-gray-600">Responding as: <strong className="text-eb-ink font-semibold">{friends[currentInvitedIndex].name}</strong></span>
+                        <button
+                          type="button"
+                          onClick={() => setCurrentInvitedIndex(null)}
+                          className="text-eb-blue hover:underline font-medium"
                         >
-                          <option value="Pending">Pending</option>
-                          <option value="Interested">Interested</option>
-                          <option value="Going">Going</option>
-                        </select>
+                          Switch name
+                        </button>
+                      </div>
+                      
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+                        <div className="bg-white p-3 rounded-lg border border-gray-200/80 flex items-center justify-between">
+                          <span className="font-medium text-gray-700">Your Interest:</span>
+                          <select
+                            value={friends[currentInvitedIndex].status}
+                            onChange={(e) => handleStatusChange(currentInvitedIndex, e.target.value as FriendStatus)}
+                            className="border rounded-md px-2 py-1 bg-gray-50 font-medium text-eb-ink"
+                          >
+                            <option value="Pending">Pending</option>
+                            <option value="Interested">Interested</option>
+                            <option value="Going">Going</option>
+                          </select>
+                        </div>
+
+                        <div className="bg-white p-3 rounded-lg border border-gray-200/80 flex items-center justify-between">
+                          <span className="font-medium text-gray-700">Availability:</span>
+                          <select
+                            value={friends[currentInvitedIndex].availability}
+                            onChange={(e) => handleAvailabilityChange(currentInvitedIndex, e.target.value as FriendAvailability)}
+                            className="border rounded-md px-2 py-1 bg-gray-50 font-medium text-eb-ink"
+                          >
+                            <option value="Unknown">Unknown</option>
+                            <option value="Available">Available</option>
+                            <option value="Busy">Busy</option>
+                          </select>
+                        </div>
                       </div>
                     </div>
-
-                    <div className="flex items-center justify-between text-xs pt-1">
-                      <span className="font-medium text-gray-700">Your Availability:</span>
-                      <div className="flex items-center gap-2">
-                        <span className={`px-2 py-0.5 rounded font-semibold ${
-                          friends[currentInvitedIndex].availability === 'Available' ? 'bg-emerald-100 text-emerald-800' :
-                          friends[currentInvitedIndex].availability === 'Busy' ? 'bg-rose-100 text-rose-800' :
-                          'bg-gray-200 text-gray-700'
-                        }`}>
-                          {friends[currentInvitedIndex].availability}
-                        </span>
-                        <select
-                          value={friends[currentInvitedIndex].availability}
-                          onChange={(e) => handleAvailabilityChange(currentInvitedIndex, e.target.value as FriendAvailability)}
-                          className="border rounded px-1.5 py-1 bg-white"
+                  ) : (
+                    <form onSubmit={handleJoinPlanAsInvitedFriend} className="bg-gray-50 p-4 rounded-xl border border-gray-200 space-y-3">
+                      <label className="block text-xs font-medium text-gray-700">Enter your name to join and submit your responses:</label>
+                      <div className="flex gap-2">
+                        <input
+                          type="text"
+                          placeholder="Your name"
+                          value={invitedNameInput}
+                          onChange={(e) => setInvitedNameInput(e.target.value)}
+                          className="flex-1 rounded-lg border border-gray-300 px-3.5 py-2 text-sm focus:outline-none focus:border-eb-orange bg-white"
+                          required
+                        />
+                        <button
+                          type="submit"
+                          className="rounded-lg bg-eb-ink px-4 py-2 text-sm font-semibold text-white hover:bg-gray-800 transition-colors"
                         >
-                          <option value="Unknown">Unknown</option>
-                          <option value="Available">Available</option>
-                          <option value="Busy">Busy</option>
-                        </select>
+                          Join Plan
+                        </button>
                       </div>
-                    </div>
+                    </form>
+                  )}
+                </div>
 
-                    <button
-                      type="button"
-                      onClick={() => setCurrentInvitedIndex(null)}
-                      className="text-xs text-eb-blue underline pt-1 block"
-                    >
-                      Not {friends[currentInvitedIndex].name}? Switch name
-                    </button>
+                {/* Invited Friends List */}
+                <div>
+                  <div className="flex items-center justify-between mb-2">
+                    <h4 className="text-sm font-bold text-eb-ink">Invited Friends</h4>
+                    <span className="text-xs text-gray-500 font-medium">{friends.length} invited</span>
                   </div>
-                ) : (
-                  <form onSubmit={handleJoinPlanAsInvitedFriend} className="mt-3 space-y-2">
-                    <p className="text-xs text-gray-600">Enter your name to join and submit your responses:</p>
-                    <div className="flex gap-2">
-                      <input
-                        type="text"
-                        placeholder="Your name"
-                        value={invitedNameInput}
-                        onChange={(e) => setInvitedNameInput(e.target.value)}
-                        className="flex-1 rounded border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:border-eb-orange"
-                        required
-                      />
-                      <button
-                        type="submit"
-                        className="rounded bg-eb-ink px-4 py-2 text-sm font-medium text-white hover:bg-gray-800"
-                      >
-                        Join Plan
-                      </button>
-                    </div>
-                  </form>
-                )}
-
-                {/* P2 #3: Invited Friend can view which other friends are invited */}
-                <div className="mt-4 pt-3 border-t">
-                  <h4 className="text-xs font-semibold text-eb-gray uppercase tracking-wider">Invited Friends ({friends.length})</h4>
                   {friends.length > 0 ? (
-                    <ul className="mt-2 space-y-1.5 max-h-36 overflow-y-auto">
+                    <ul className="space-y-2 max-h-40 overflow-y-auto">
                       {friends.map((f: Friend, idx: number) => (
-                        <li key={idx} className="flex items-center justify-between text-xs bg-gray-50 px-2.5 py-2 rounded border border-gray-100">
-                          <span className="text-eb-ink font-medium flex items-center gap-1.5">
-                            <span className="size-1.5 rounded-full bg-eb-orange inline-block"></span>
+                        <li key={idx} className="flex items-center justify-between text-xs bg-gray-50 px-3.5 py-2.5 rounded-lg border border-gray-200/70">
+                          <span className="text-eb-ink font-medium flex items-center gap-2">
+                            <span className="size-2 rounded-full bg-eb-orange inline-block"></span>
                             {f.name}
                           </span>
-                          <span className="text-[11px] text-gray-500 bg-white px-2 py-0.5 rounded border">Invited</span>
+                          <span className="text-[11px] text-gray-500 bg-white px-2.5 py-0.5 rounded-md border border-gray-200">Invited</span>
                         </li>
                       ))}
                     </ul>
                   ) : (
-                    <p className="mt-1 text-xs text-gray-500">No other friends invited yet.</p>
+                    <p className="text-xs text-gray-500 italic">No other friends invited yet.</p>
                   )}
                 </div>
 
                 {/* Summary of group responses */}
-                <div className="mt-4 pt-3 border-t">
-                  <h4 className="text-xs font-semibold text-eb-gray uppercase tracking-wider">Group Responses</h4>
+                <div>
+                  <h4 className="text-sm font-bold text-eb-ink mb-2">Group Responses</h4>
                   {friends.length > 0 ? (
-                    <ul className="mt-2 space-y-1.5 max-h-36 overflow-y-auto">
+                    <ul className="space-y-2 max-h-40 overflow-y-auto">
                       {friends.map((f: Friend, idx: number) => (
-                        <li key={idx} className="flex items-center justify-between text-xs bg-gray-50 px-2 py-1.5 rounded">
+                        <li key={idx} className="flex items-center justify-between text-xs bg-gray-50 px-3.5 py-2.5 rounded-lg border border-gray-200/70">
                           <span className="text-eb-ink font-medium">{f.name}</span>
-                          <div className="flex items-center gap-1.5">
-                            <span className={`px-1.5 py-0.5 rounded font-semibold ${
+                          <div className="flex items-center gap-2">
+                            <span className={`px-2 py-0.5 rounded-md font-semibold ${
                               f.status === 'Going' ? 'bg-green-100 text-green-800' :
                               f.status === 'Interested' ? 'bg-blue-100 text-blue-800' :
                               'bg-yellow-100 text-yellow-800'
                             }`}>
                               {f.status}
                             </span>
-                            <span className={`px-1.5 py-0.5 rounded font-semibold ${
+                            <span className={`px-2 py-0.5 rounded-md font-semibold ${
                               f.availability === 'Available' ? 'bg-emerald-100 text-emerald-800' :
                               f.availability === 'Busy' ? 'bg-rose-100 text-rose-800' :
                               'bg-gray-200 text-gray-700'
@@ -530,80 +517,82 @@ export function EventPage() {
                       ))}
                     </ul>
                   ) : (
-                    <p className="mt-1 text-xs text-gray-500">No responses yet.</p>
+                    <p className="text-xs text-gray-500 italic">No responses yet.</p>
                   )}
                 </div>
               </div>
             ) : (
-              <div className="mt-6 border-t pt-4 space-y-5">
-                <div className="bg-gray-50 p-3.5 rounded border border-gray-200/80 space-y-3">
+              <div className="mt-6 border-t border-gray-200 pt-5 space-y-6">
+                {/* Aggregate Group Response Summary */}
+                <div className="bg-gray-50 p-4 rounded-xl border border-gray-200/80 space-y-3">
                   <div className="flex items-center justify-between">
                     <h3 className="text-xs font-bold text-eb-ink uppercase tracking-wider">Group Response Summary</h3>
-                    <span className="text-xs font-medium text-eb-gray">
+                    <span className="text-xs font-medium text-gray-600 bg-white px-2.5 py-1 rounded-md border border-gray-200">
                       {friends.filter((f: Friend) => f.hasResponded).length} of {friends.length} Responded
                     </span>
                   </div>
 
-                  <div className="grid grid-cols-2 gap-3 text-xs pt-1">
-                    <div className="bg-white p-2.5 rounded border border-gray-200/60 space-y-1">
-                      <p className="font-semibold text-gray-600 mb-1.5">Interest Breakdown</p>
-                      <div className="flex justify-between items-center text-gray-700">
-                        <span className="flex items-center gap-1"><span className="size-2 rounded-full bg-green-500 inline-block"></span>Going</span>
-                        <span className="font-bold">{friends.filter((f: Friend) => f.status === 'Going').length}</span>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+                    <div className="bg-white p-3 rounded-lg border border-gray-200/70 space-y-1.5">
+                      <p className="font-semibold text-gray-700 mb-2">Interest Breakdown</p>
+                      <div className="flex justify-between items-center text-gray-600">
+                        <span className="flex items-center gap-1.5"><span className="size-2 rounded-full bg-green-500 inline-block"></span>Going</span>
+                        <span className="font-bold text-eb-ink">{friends.filter((f: Friend) => f.status === 'Going').length}</span>
                       </div>
-                      <div className="flex justify-between items-center text-gray-700">
-                        <span className="flex items-center gap-1"><span className="size-2 rounded-full bg-blue-500 inline-block"></span>Interested</span>
-                        <span className="font-bold">{friends.filter((f: Friend) => f.status === 'Interested').length}</span>
+                      <div className="flex justify-between items-center text-gray-600">
+                        <span className="flex items-center gap-1.5"><span className="size-2 rounded-full bg-blue-500 inline-block"></span>Interested</span>
+                        <span className="font-bold text-eb-ink">{friends.filter((f: Friend) => f.status === 'Interested').length}</span>
                       </div>
-                      <div className="flex justify-between items-center text-gray-700">
-                        <span className="flex items-center gap-1"><span className="size-2 rounded-full bg-yellow-500 inline-block"></span>Pending</span>
-                        <span className="font-bold">{friends.filter((f: Friend) => f.status === 'Pending').length}</span>
+                      <div className="flex justify-between items-center text-gray-600">
+                        <span className="flex items-center gap-1.5"><span className="size-2 rounded-full bg-yellow-500 inline-block"></span>Pending</span>
+                        <span className="font-bold text-eb-ink">{friends.filter((f: Friend) => f.status === 'Pending').length}</span>
                       </div>
                     </div>
 
-                    <div className="bg-white p-2.5 rounded border border-gray-200/60 space-y-1">
-                      <p className="font-semibold text-gray-600 mb-1.5">Availability Breakdown</p>
-                      <div className="flex justify-between items-center text-gray-700">
-                        <span className="flex items-center gap-1"><span className="size-2 rounded-full bg-emerald-500 inline-block"></span>Available</span>
-                        <span className="font-bold">{friends.filter((f: Friend) => f.availability === 'Available').length}</span>
+                    <div className="bg-white p-3 rounded-lg border border-gray-200/70 space-y-1.5">
+                      <p className="font-semibold text-gray-700 mb-2">Availability Breakdown</p>
+                      <div className="flex justify-between items-center text-gray-600">
+                        <span className="flex items-center gap-1.5"><span className="size-2 rounded-full bg-emerald-500 inline-block"></span>Available</span>
+                        <span className="font-bold text-eb-ink">{friends.filter((f: Friend) => f.availability === 'Available').length}</span>
                       </div>
-                      <div className="flex justify-between items-center text-gray-700">
-                        <span className="flex items-center gap-1"><span className="size-2 rounded-full bg-rose-500 inline-block"></span>Busy</span>
-                        <span className="font-bold">{friends.filter((f: Friend) => f.availability === 'Busy').length}</span>
+                      <div className="flex justify-between items-center text-gray-600">
+                        <span className="flex items-center gap-1.5"><span className="size-2 rounded-full bg-rose-500 inline-block"></span>Busy</span>
+                        <span className="font-bold text-eb-ink">{friends.filter((f: Friend) => f.availability === 'Busy').length}</span>
                       </div>
-                      <div className="flex justify-between items-center text-gray-700">
-                        <span className="flex items-center gap-1"><span className="size-2 rounded-full bg-gray-400 inline-block"></span>Unknown</span>
-                        <span className="font-bold">{friends.filter((f: Friend) => f.availability === 'Unknown').length}</span>
+                      <div className="flex justify-between items-center text-gray-600">
+                        <span className="flex items-center gap-1.5"><span className="size-2 rounded-full bg-gray-400 inline-block"></span>Unknown</span>
+                        <span className="font-bold text-eb-ink">{friends.filter((f: Friend) => f.availability === 'Unknown').length}</span>
                       </div>
                     </div>
                   </div>
                 </div>
 
-                <div>
+                {/* Invited Friends List */}
+                <div className="space-y-3">
                   <div className="flex items-center justify-between">
-                    <h3 className="text-sm font-semibold text-eb-ink">Invited Friends ({friends.length})</h3>
-                    <span className="text-xs text-eb-gray">Status & Responses</span>
+                    <h3 className="text-sm font-bold text-eb-ink">Invited Friends ({friends.length})</h3>
+                    <span className="text-xs text-gray-500">Status & Responses</span>
                   </div>
                   {friends.length > 0 ? (
-                    <ul className="mt-2 space-y-3">
+                    <ul className="space-y-3 max-h-60 overflow-y-auto">
                       {friends.map((friend: Friend, idx: number) => (
-                        <li key={idx} className="text-sm bg-gray-50 p-3 rounded space-y-2 border border-gray-100">
+                        <li key={idx} className="text-sm bg-gray-50 p-3.5 rounded-xl space-y-3 border border-gray-200/70 shadow-sm">
                           <div className="flex items-center justify-between">
-                            <span className="font-medium text-eb-ink flex items-center gap-1.5">
-                              <span className={`size-2 rounded-full inline-block ${friend.hasResponded ? 'bg-green-500' : 'bg-amber-400'}`}></span>
+                            <span className="font-semibold text-eb-ink flex items-center gap-2">
+                              <span className={`size-2.5 rounded-full inline-block ${friend.hasResponded ? 'bg-green-500' : 'bg-amber-400'}`}></span>
                               {friend.name}
                             </span>
-                            <div className="flex items-center gap-2">
+                            <div className="flex items-center gap-2.5">
                               {!friend.hasResponded && (
                                 <button
                                   type="button"
                                   onClick={() => handleResendInvitation(friend.name)}
-                                  className="text-[11px] text-eb-blue hover:underline font-medium"
+                                  className="text-xs text-eb-blue hover:underline font-semibold"
                                 >
                                   Resend
                                 </button>
                               )}
-                              <span className={`text-[11px] px-2 py-0.5 rounded font-medium border ${
+                              <span className={`text-[11px] px-2.5 py-1 rounded-md font-medium border ${
                                 friend.hasResponded 
                                   ? 'bg-green-50 text-green-700 border-green-200' 
                                   : 'bg-amber-50 text-amber-700 border-amber-200'
@@ -612,52 +601,56 @@ export function EventPage() {
                               </span>
                             </div>
                           </div>
-                          <div className="flex flex-wrap items-center justify-between gap-2 text-xs pt-1 border-t border-gray-200/60">
-                            <div className="flex items-center gap-1.5">
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs pt-2 border-t border-gray-200/60">
+                            <div className="flex items-center justify-between bg-white p-2 rounded-lg border border-gray-200/60">
                               <span className="text-gray-500">Interest:</span>
-                              <span className={`px-2 py-0.5 rounded font-semibold ${
-                                friend.status === 'Going' ? 'bg-green-100 text-green-800' :
-                                friend.status === 'Interested' ? 'bg-blue-100 text-blue-800' :
-                                'bg-yellow-100 text-yellow-800'
-                              }`}>
-                                {friend.status}
-                              </span>
-                              <select
-                                value={friend.status}
-                                onChange={(e) => handleStatusChange(idx, e.target.value as FriendStatus)}
-                                className="border rounded px-1 py-0.5 bg-white text-xs"
-                              >
-                                <option value="Pending">Pending</option>
-                                <option value="Interested">Interested</option>
-                                <option value="Going">Going</option>
-                              </select>
+                              <div className="flex items-center gap-2">
+                                <span className={`px-2 py-0.5 rounded font-semibold ${
+                                  friend.status === 'Going' ? 'bg-green-100 text-green-800' :
+                                  friend.status === 'Interested' ? 'bg-blue-100 text-blue-800' :
+                                  'bg-yellow-100 text-yellow-800'
+                                }`}>
+                                  {friend.status}
+                                </span>
+                                <select
+                                  value={friend.status}
+                                  onChange={(e) => handleStatusChange(idx, e.target.value as FriendStatus)}
+                                  className="border rounded px-1.5 py-0.5 bg-gray-50 text-xs font-medium"
+                                >
+                                  <option value="Pending">Pending</option>
+                                  <option value="Interested">Interested</option>
+                                  <option value="Going">Going</option>
+                                </select>
+                              </div>
                             </div>
 
-                            <div className="flex items-center gap-1.5">
+                            <div className="flex items-center justify-between bg-white p-2 rounded-lg border border-gray-200/60">
                               <span className="text-gray-500">Availability:</span>
-                              <span className={`px-2 py-0.5 rounded font-semibold ${
-                                friend.availability === 'Available' ? 'bg-emerald-100 text-emerald-800' :
-                                friend.availability === 'Busy' ? 'bg-rose-100 text-rose-800' :
-                                'bg-gray-200 text-gray-700'
-                              }`}>
-                                {friend.availability}
-                              </span>
-                              <select
-                                value={friend.availability}
-                                onChange={(e) => handleAvailabilityChange(idx, e.target.value as FriendAvailability)}
-                                className="border rounded px-1 py-0.5 bg-white text-xs"
-                              >
-                                <option value="Unknown">Unknown</option>
-                                <option value="Available">Available</option>
-                                <option value="Busy">Busy</option>
-                              </select>
+                              <div className="flex items-center gap-2">
+                                <span className={`px-2 py-0.5 rounded font-semibold ${
+                                  friend.availability === 'Available' ? 'bg-emerald-100 text-emerald-800' :
+                                  friend.availability === 'Busy' ? 'bg-rose-100 text-rose-800' :
+                                  'bg-gray-200 text-gray-700'
+                                }`}>
+                                  {friend.availability}
+                                </span>
+                                <select
+                                  value={friend.availability}
+                                  onChange={(e) => handleAvailabilityChange(idx, e.target.value as FriendAvailability)}
+                                  className="border rounded px-1.5 py-0.5 bg-gray-50 text-xs font-medium"
+                                >
+                                  <option value="Unknown">Unknown</option>
+                                  <option value="Available">Available</option>
+                                  <option value="Busy">Busy</option>
+                                </select>
+                              </div>
                             </div>
                           </div>
                         </li>
                       ))}
                     </ul>
                   ) : (
-                    <p className="mt-2 text-xs text-gray-500 italic">No friends invited to this plan yet. Use "Invite Friends" below or add friends directly.</p>
+                    <p className="text-xs text-gray-500 italic">No friends invited to this plan yet. Use "Invite Friends" below or add friends directly.</p>
                   )}
 
                   <form onSubmit={handleAddFriend} className="mt-3 flex gap-2">
@@ -666,11 +659,11 @@ export function EventPage() {
                       placeholder="Friend's name or email"
                       value={friendInput}
                       onChange={(e) => setFriendInput(e.target.value)}
-                      className="flex-1 rounded border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:border-eb-orange"
+                      className="flex-1 rounded-lg border border-gray-300 px-3.5 py-2 text-sm focus:outline-none focus:border-eb-orange bg-white"
                     />
                     <button
                       type="submit"
-                      className="rounded bg-eb-ink px-4 py-2 text-sm font-medium text-white hover:bg-gray-800"
+                      className="rounded-lg bg-eb-ink px-4 py-2 text-sm font-semibold text-white hover:bg-gray-800 transition-colors"
                     >
                       Add
                     </button>
@@ -679,21 +672,21 @@ export function EventPage() {
               </div>
             )}
 
-            <div className="mt-6 flex flex-col gap-3">
+            <div className="mt-8 flex flex-col gap-3 pt-4 border-t border-gray-200">
               <button
                 type="button"
                 onClick={() => {
                   setPlanCreated(false)
                   setCheckoutOpen(true)
                 }}
-                className="h-11 w-full rounded border-[1.6px] border-transparent bg-eb-orange px-3 text-lg leading-5 font-medium text-white"
+                className="h-12 w-full rounded-lg bg-eb-orange text-base font-semibold text-white shadow-sm hover:bg-orange-600 transition-colors"
               >
                 Continue to Registration
               </button>
               <button
                 type="button"
                 onClick={() => setPlanCreated(false)}
-                className="h-11 w-full rounded border border-gray-300 bg-white px-3 text-lg leading-5 font-medium text-eb-ink hover:bg-gray-50"
+                className="h-11 w-full rounded-lg border border-gray-300 bg-white px-3 text-sm font-medium text-eb-ink hover:bg-gray-50 transition-colors"
               >
                 Back to Event Details
               </button>
@@ -701,7 +694,7 @@ export function EventPage() {
                 <button
                   type="button"
                   onClick={() => setInviteOpen(true)}                             
-                  className="h-11 w-full rounded border border-gray-300 bg-white px-3 text-lg leading-5 font-medium text-eb-ink hover:bg-gray-50"
+                  className="h-11 w-full rounded-lg border border-gray-300 bg-white px-3 text-sm font-medium text-eb-ink hover:bg-gray-50 transition-colors"
                 >
                   Invite Friends
                 </button>
@@ -711,11 +704,11 @@ export function EventPage() {
         </div>
       )}
       {inviteOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-          <div className="w-full max-w-md rounded-lg bg-white p-8 shadow-xl">
-            <h2 className="text-xl font-semibold">Invite Friends</h2>
-            <p className="mt-3 text-sm text-gray-600">
-              Share this plan with your friends.
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4">
+          <div className="w-full max-w-md rounded-xl bg-white p-8 shadow-2xl space-y-5">
+            <h2 className="text-xl font-bold text-eb-ink">Invite Friends</h2>
+            <p className="text-sm text-gray-600">
+              Share this plan with your friends using your unique invitation link.
             </p>
             <button
               type="button"
@@ -723,14 +716,14 @@ export function EventPage() {
                 const inviteUrl = `${window.location.origin}${window.location.pathname}?plan=${planId}`
                 window.prompt("Copy this invitation link:", inviteUrl)
               }}
-              className="mt-6 h-11 w-full rounded bg-orange-600 text-white font-semibold"
+              className="h-12 w-full rounded-lg bg-eb-orange text-sm font-semibold text-white hover:bg-orange-600 transition-colors shadow-sm"
             >
               Copy Invitation Link
             </button>
             <button
               type="button"
               onClick={() => setInviteOpen(false)}
-              className="mt-6 h-11 w-full rounded bg-eb-orange px-3 text-white"
+              className="h-11 w-full rounded-lg border border-gray-300 bg-white text-sm font-medium text-eb-ink hover:bg-gray-50 transition-colors"
             >
               Back
             </button>
