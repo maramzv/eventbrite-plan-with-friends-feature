@@ -424,96 +424,143 @@ export function EventPage() {
                 </div>
               </div>
             ) : (
-              /* Organizer-side Invited Friends Section with Response Tracking (P1 #3) */
-              <div className="mt-6 border-t pt-4">
-                <div className="flex items-center justify-between">
-                  <h3 className="text-sm font-semibold text-eb-ink">Invited Friends ({friends.length})</h3>
-                  <span className="text-xs text-eb-gray">
-                    {friends.filter(f => f.hasResponded).length} of {friends.length} Responded
-                  </span>
+              /* Organizer-side Invited Friends Section & Group Response Summary (P1 #4) */
+              <div className="mt-6 border-t pt-4 space-y-5">
+                {/* Aggregate Group Response Summary */}
+                <div className="bg-gray-50 p-3.5 rounded border border-gray-200/80 space-y-3">
+                  <div className="flex items-center justify-between">
+                    <h3 className="text-xs font-bold text-eb-ink uppercase tracking-wider">Group Response Summary</h3>
+                    <span className="text-xs font-medium text-eb-gray">
+                      {friends.filter(f => f.hasResponded).length} of {friends.length} Responded
+                    </span>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-3 text-xs pt-1">
+                    {/* Interest Counts */}
+                    <div className="bg-white p-2.5 rounded border border-gray-200/60 space-y-1">
+                      <p className="font-semibold text-gray-600 mb-1.5">Interest Breakdown</p>
+                      <div className="flex justify-between items-center text-gray-700">
+                        <span className="flex items-center gap-1"><span className="size-2 rounded-full bg-green-500 inline-block"></span>Going</span>
+                        <span className="font-bold">{friends.filter(f => f.status === 'Going').length}</span>
+                      </div>
+                      <div className="flex justify-between items-center text-gray-700">
+                        <span className="flex items-center gap-1"><span className="size-2 rounded-full bg-blue-500 inline-block"></span>Interested</span>
+                        <span className="font-bold">{friends.filter(f => f.status === 'Interested').length}</span>
+                      </div>
+                      <div className="flex justify-between items-center text-gray-700">
+                        <span className="flex items-center gap-1"><span className="size-2 rounded-full bg-yellow-500 inline-block"></span>Pending</span>
+                        <span className="font-bold">{friends.filter(f => f.status === 'Pending').length}</span>
+                      </div>
+                    </div>
+
+                    {/* Availability Counts */}
+                    <div className="bg-white p-2.5 rounded border border-gray-200/60 space-y-1">
+                      <p className="font-semibold text-gray-600 mb-1.5">Availability Breakdown</p>
+                      <div className="flex justify-between items-center text-gray-700">
+                        <span className="flex items-center gap-1"><span className="size-2 rounded-full bg-emerald-500 inline-block"></span>Available</span>
+                        <span className="font-bold">{friends.filter(f => f.availability === 'Available').length}</span>
+                      </div>
+                      <div className="flex justify-between items-center text-gray-700">
+                        <span className="flex items-center gap-1"><span className="size-2 rounded-full bg-rose-500 inline-block"></span>Busy</span>
+                        <span className="font-bold">{friends.filter(f => f.availability === 'Busy').length}</span>
+                      </div>
+                      <div className="flex justify-between items-center text-gray-700">
+                        <span className="flex items-center gap-1"><span className="size-2 rounded-full bg-gray-400 inline-block"></span>Unknown</span>
+                        <span className="font-bold">{friends.filter(f => f.availability === 'Unknown').length}</span>
+                      </div>
+                    </div>
+                  </div>
                 </div>
-                {friends.length > 0 ? (
-                  <ul className="mt-2 space-y-3">
-                    {friends.map((friend, idx) => (
-                      <li key={idx} className="text-sm bg-gray-50 p-3 rounded space-y-2 border border-gray-100">
-                        <div className="flex items-center justify-between">
-                          <span className="font-medium text-eb-ink flex items-center gap-1.5">
-                            <span className={`size-2 rounded-full inline-block ${friend.hasResponded ? 'bg-green-500' : 'bg-amber-400'}`}></span>
-                            {friend.name}
-                          </span>
-                          <span className={`text-[11px] px-2 py-0.5 rounded font-medium border ${
-                            friend.hasResponded 
-                              ? 'bg-green-50 text-green-700 border-green-200' 
-                              : 'bg-amber-50 text-amber-700 border-amber-200'
-                          }`}>
-                            {friend.hasResponded ? 'Responded' : 'Pending Response'}
-                          </span>
-                        </div>
-                        <div className="flex flex-wrap items-center justify-between gap-2 text-xs pt-1 border-t border-gray-200/60">
-                          {/* Interest Response */}
-                          <div className="flex items-center gap-1.5">
-                            <span className="text-gray-500">Interest:</span>
-                            <span className={`px-2 py-0.5 rounded font-semibold ${
-                              friend.status === 'Going' ? 'bg-green-100 text-green-800' :
-                              friend.status === 'Interested' ? 'bg-blue-100 text-blue-800' :
-                              'bg-yellow-100 text-yellow-800'
-                            }`}>
-                              {friend.status}
-                            </span>
-                            <select
-                              value={friend.status}
-                              onChange={(e) => handleStatusChange(idx, e.target.value as FriendStatus)}
-                              className="border rounded px-1 py-0.5 bg-white text-xs"
-                            >
-                              <option value="Pending">Pending</option>
-                              <option value="Interested">Interested</option>
-                              <option value="Going">Going</option>
-                            </select>
-                          </div>
 
-                          {/* Availability Response */}
-                          <div className="flex items-center gap-1.5">
-                            <span className="text-gray-500">Availability:</span>
-                            <span className={`px-2 py-0.5 rounded font-semibold ${
-                              friend.availability === 'Available' ? 'bg-emerald-100 text-emerald-800' :
-                              friend.availability === 'Busy' ? 'bg-rose-100 text-rose-800' :
-                              'bg-gray-200 text-gray-700'
-                            }`}>
-                              {friend.availability}
+                {/* Invited Friends List */}
+                <div>
+                  <div className="flex items-center justify-between">
+                    <h3 className="text-sm font-semibold text-eb-ink">Invited Friends ({friends.length})</h3>
+                    <span className="text-xs text-eb-gray">Status & Responses</span>
+                  </div>
+                  {friends.length > 0 ? (
+                    <ul className="mt-2 space-y-3">
+                      {friends.map((friend, idx) => (
+                        <li key={idx} className="text-sm bg-gray-50 p-3 rounded space-y-2 border border-gray-100">
+                          <div className="flex items-center justify-between">
+                            <span className="font-medium text-eb-ink flex items-center gap-1.5">
+                              <span className={`size-2 rounded-full inline-block ${friend.hasResponded ? 'bg-green-500' : 'bg-amber-400'}`}></span>
+                              {friend.name}
                             </span>
-                            <select
-                              value={friend.availability}
-                              onChange={(e) => handleAvailabilityChange(idx, e.target.value as FriendAvailability)}
-                              className="border rounded px-1 py-0.5 bg-white text-xs"
-                            >
-                              <option value="Unknown">Unknown</option>
-                              <option value="Available">Available</option>
-                              <option value="Busy">Busy</option>
-                            </select>
+                            <span className={`text-[11px] px-2 py-0.5 rounded font-medium border ${
+                              friend.hasResponded 
+                                ? 'bg-green-50 text-green-700 border-green-200' 
+                                : 'bg-amber-50 text-amber-700 border-amber-200'
+                            }`}>
+                              {friend.hasResponded ? 'Responded' : 'Pending Response'}
+                            </span>
                           </div>
-                        </div>
-                      </li>
-                    ))}
-                  </ul>
-                ) : (
-                  <p className="mt-2 text-xs text-gray-500 italic">No friends invited to this plan yet. Use "Invite Friends" below or add friends directly.</p>
-                )}
+                          <div className="flex flex-wrap items-center justify-between gap-2 text-xs pt-1 border-t border-gray-200/60">
+                            {/* Interest Response */}
+                            <div className="flex items-center gap-1.5">
+                              <span className="text-gray-500">Interest:</span>
+                              <span className={`px-2 py-0.5 rounded font-semibold ${
+                                friend.status === 'Going' ? 'bg-green-100 text-green-800' :
+                                friend.status === 'Interested' ? 'bg-blue-100 text-blue-800' :
+                                'bg-yellow-100 text-yellow-800'
+                              }`}>
+                                {friend.status}
+                              </span>
+                              <select
+                                value={friend.status}
+                                onChange={(e) => handleStatusChange(idx, e.target.value as FriendStatus)}
+                                className="border rounded px-1 py-0.5 bg-white text-xs"
+                              >
+                                <option value="Pending">Pending</option>
+                                <option value="Interested">Interested</option>
+                                <option value="Going">Going</option>
+                              </select>
+                            </div>
 
-                <form onSubmit={handleAddFriend} className="mt-3 flex gap-2">
-                  <input
-                    type="text"
-                    placeholder="Friend's name or email"
-                    value={friendInput}
-                    onChange={(e) => setFriendInput(e.target.value)}
-                    className="flex-1 rounded border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:border-eb-orange"
-                  />
-                  <button
-                    type="submit"
-                    className="rounded bg-eb-ink px-4 py-2 text-sm font-medium text-white hover:bg-gray-800"
-                  >
-                    Add
-                  </button>
-                </form>
+                            {/* Availability Response */}
+                            <div className="flex items-center gap-1.5">
+                              <span className="text-gray-500">Availability:</span>
+                              <span className={`px-2 py-0.5 rounded font-semibold ${
+                                friend.availability === 'Available' ? 'bg-emerald-100 text-emerald-800' :
+                                friend.availability === 'Busy' ? 'bg-rose-100 text-rose-800' :
+                                'bg-gray-200 text-gray-700'
+                              }`}>
+                                {friend.availability}
+                              </span>
+                              <select
+                                value={friend.availability}
+                                onChange={(e) => handleAvailabilityChange(idx, e.target.value as FriendAvailability)}
+                                className="border rounded px-1 py-0.5 bg-white text-xs"
+                              >
+                                <option value="Unknown">Unknown</option>
+                                <option value="Available">Available</option>
+                                <option value="Busy">Busy</option>
+                              </select>
+                            </div>
+                          </div>
+                        </li>
+                      ))}
+                    </ul>
+                  ) : (
+                    <p className="mt-2 text-xs text-gray-500 italic">No friends invited to this plan yet. Use "Invite Friends" below or add friends directly.</p>
+                  )}
+
+                  <form onSubmit={handleAddFriend} className="mt-3 flex gap-2">
+                    <input
+                      type="text"
+                      placeholder="Friend's name or email"
+                      value={friendInput}
+                      onChange={(e) => setFriendInput(e.target.value)}
+                      className="flex-1 rounded border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:border-eb-orange"
+                    />
+                    <button
+                      type="submit"
+                      className="rounded bg-eb-ink px-4 py-2 text-sm font-medium text-white hover:bg-gray-800"
+                    >
+                      Add
+                    </button>
+                  </form>
+                </div>
               </div>
             )}
 
