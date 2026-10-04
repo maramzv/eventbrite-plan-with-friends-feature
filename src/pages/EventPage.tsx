@@ -120,6 +120,7 @@ export function EventPage() {
           name: typeof f === 'string' ? f : f.name,
           status: f.status || 'Pending',
           availability: f.availability || 'Unknown',
+          hasResponded: !!f.hasResponded,
         }))
         setFriends(normalizedFriends)
         setIsInvitedView(true)
@@ -137,6 +138,7 @@ export function EventPage() {
         name: typeof f === 'string' ? f : f.name,
         status: f.status || 'Pending',
         availability: f.availability || 'Unknown',
+        hasResponded: !!f.hasResponded,
       }))
       setFriends(normalizedFriends)
       setFriendInput('')
@@ -151,6 +153,7 @@ export function EventPage() {
         name: typeof f === 'string' ? f : f.name,
         status: f.status || 'Pending',
         availability: f.availability || 'Unknown',
+        hasResponded: !!f.hasResponded,
       }))
       setFriends(normalizedFriends)
     }
@@ -164,6 +167,7 @@ export function EventPage() {
         name: typeof f === 'string' ? f : f.name,
         status: f.status || 'Pending',
         availability: f.availability || 'Unknown',
+        hasResponded: !!f.hasResponded,
       }))
       setFriends(normalizedFriends)
     }
@@ -178,6 +182,7 @@ export function EventPage() {
         name: typeof f === 'string' ? f : f.name,
         status: f.status || 'Pending',
         availability: f.availability || 'Unknown',
+        hasResponded: !!f.hasResponded,
       }))
       setFriends(normalizedFriends)
       const newIndex = normalizedFriends.findIndex((f) => f.name.toLowerCase() === invitedNameInput.trim().toLowerCase())
@@ -419,11 +424,13 @@ export function EventPage() {
                 </div>
               </div>
             ) : (
-              /* Organizer-side Invited Friends Section (P1 #2) */
+              /* Organizer-side Invited Friends Section with Response Tracking (P1 #3) */
               <div className="mt-6 border-t pt-4">
                 <div className="flex items-center justify-between">
                   <h3 className="text-sm font-semibold text-eb-ink">Invited Friends ({friends.length})</h3>
-                  <span className="text-xs text-eb-gray">Status & Responses</span>
+                  <span className="text-xs text-eb-gray">
+                    {friends.filter(f => f.hasResponded).length} of {friends.length} Responded
+                  </span>
                 </div>
                 {friends.length > 0 ? (
                   <ul className="mt-2 space-y-3">
@@ -431,10 +438,16 @@ export function EventPage() {
                       <li key={idx} className="text-sm bg-gray-50 p-3 rounded space-y-2 border border-gray-100">
                         <div className="flex items-center justify-between">
                           <span className="font-medium text-eb-ink flex items-center gap-1.5">
-                            <span className="size-2 rounded-full bg-eb-orange inline-block"></span>
+                            <span className={`size-2 rounded-full inline-block ${friend.hasResponded ? 'bg-green-500' : 'bg-amber-400'}`}></span>
                             {friend.name}
                           </span>
-                          <span className="text-[11px] text-gray-500 bg-white px-2 py-0.5 rounded border">Invited</span>
+                          <span className={`text-[11px] px-2 py-0.5 rounded font-medium border ${
+                            friend.hasResponded 
+                              ? 'bg-green-50 text-green-700 border-green-200' 
+                              : 'bg-amber-50 text-amber-700 border-amber-200'
+                          }`}>
+                            {friend.hasResponded ? 'Responded' : 'Pending Response'}
+                          </span>
                         </div>
                         <div className="flex flex-wrap items-center justify-between gap-2 text-xs pt-1 border-t border-gray-200/60">
                           {/* Interest Response */}
@@ -518,7 +531,7 @@ export function EventPage() {
               <button
                 type="button"
                 onClick={() => setPlanCreated(false)}
-                className="h-11 work-full rounded border border-gray-300 bg-white px-3 text-lg leading-5 font-medium text-eb-ink hover:bg-gray-50"
+                className="h-11 w-full rounded border border-gray-300 bg-white px-3 text-lg leading-5 font-medium text-eb-ink hover:bg-gray-50"
               >
                 Back to Event Details
               </button>
