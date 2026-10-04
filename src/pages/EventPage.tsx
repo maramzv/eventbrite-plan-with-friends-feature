@@ -14,7 +14,7 @@ import { Overview } from '../components/event/Overview'
 import { UrgencyTag } from '../components/event/UrgencyTag'
 import { getEventBySlug, icons, type EbEvent } from '../data'
 import { compactNumber } from '../utils/format'
-import { createPlan, getPlanById } from '../utils/plans'
+import { createPlan, getPlanById, addFriendToPlan } from '../utils/plans'
 import { NotFound } from './NotFound'
 
 function OrganizerInfo({ event }: { event: EbEvent }) {
@@ -87,6 +87,8 @@ export function EventPage() {
   const [planCreated, setPlanCreated] = useState(false)
   const [inviteOpen, setInviteOpen] = useState(false)
   const [planId, setPlanId] = useState<string | null>(null)
+  const [friends, setFriends] = useState<string[]>([])
+  const [friendInput, setFriendInput] = useState('')
 
   useEffect(() => {
     if (event) document.title = `${event.title} Tickets, ${event.dateLine[0] ?? ''} | Eventbrite`
@@ -100,10 +102,21 @@ export function EventPage() {
       const existingPlan = getPlanById(incomingPlanId)
       if (existingPlan) {
         setPlanId(existingPlan.id)
-        setPlanCreated(true) // Automatically show the Plan modal so the invited friend sees it
+        setFriends(existingPlan.friends)
+        setPlanCreated(true)
       }
     }
   }, [searchParams])
+
+  const handleAddFriend = (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!planId || !friendInput.trim()) return
+    const updated = addFriendToPlan(planId, friendInput)
+    if (updated) {
+      setFriends([...updated.friends])
+      setFriendInput('')
+    }
+  }
 
   if (!event) return <NotFound />
 
@@ -172,6 +185,7 @@ export function EventPage() {
               onPlanWithFriends={() => {
                 const plan = createPlan(event.id)
                 setPlanId(plan.id)
+                setFriends(plan.friends)
                 setPlanCreated(true)
               }}
             />
@@ -190,7 +204,7 @@ export function EventPage() {
             aria-modal="true"
             aria-labelledby="plan-created-title"
             onClick={(e) => e.stopPropagation()}
-            className="w-full max-w-md rounded bg-white p-8 shadow-[0_2px_8px_rgba(0,0,0,0.12)]"
+            className="w-full max-w-md rounded bg-white p-8 shadow-[0_2px_8px_rgba(0,0,0,0.12)] max-h-[90vh] overflow-y-auto"
           >
             <h2 id="plan-created-title" className="text-xl font-semibold text-eb-purple">
               Plan created
@@ -208,6 +222,39 @@ export function EventPage() {
             <p className="mt-3 text-[15px] leading-5 text-eb-gray">
               Group discount available for eligible group bookings.
             </p>
+
+            {/* Add Friends Section (P0 Requirement) */}
+            <div className="mt-6 border-t pt-4">
+              <h3 className="text-sm font-semibold text-eb-ink">Friends in this plan ({friends.length})</h3>
+              {friends.length > 0 ? (
+                <ul className="mt-2 space-y-1">
+                  {friends.map((friend, idx) => (
+                    <li key={idx} className="text-sm text-eb-gray bg-gray-50 px-3 py-1.5 rounded">
+                      • {friend}
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p className="mt-1 text-xs text-gray-500">No friends added yet.</p>
+              )}
+
+              <form onSubmit={handleAddFriend} className="mt-3 flex gap-2">
+                <input
+                  type="text"
+                  placeholder="Friend's name or email"
+                  value={friendInput}
+                  onChange={(e) => setFriendInput(e.target.value)}
+                  className="flex-1 rounded border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:border-eb-orange"
+                />
+                <button
+                  type="submit"
+                  className="rounded bg-eb-ink px-4 py-2 text-sm font-medium text-white hover:bg-gray-800"
+                >
+                  Add
+                </button>
+              </form>
+            </div>
+
             <button
               type="button"
               onClick={() => setInviteOpen(true)}                             

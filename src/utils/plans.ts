@@ -37,3 +37,14 @@ export function getPlanById(id: string): FriendPlan | null {
   const plans = readPlans()
   return plans.find((p) => p.id === id) || null
 }
+
+/** Adds a friend name to an existing plan and updates localStorage. */
+export function addFriendToPlan(planId: string, friendName: string): FriendPlan | null {
+  const plans = readPlans()
+  const plan = plans.find((p) => p.id === planId)
+  if (!plan || !friendName.trim()) return null
+
+  plan.friends.push(friendName.trim())
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(plans))
+  return plan
+}
