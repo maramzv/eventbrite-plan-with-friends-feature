@@ -197,6 +197,11 @@ export function EventPage() {
     }
   }
 
+  const handleResendInvitation = (friendName: string) => {
+    const inviteUrl = `${window.location.origin}${window.location.pathname}?plan=${planId}`
+    window.prompt(`Resend invitation link to ${friendName}:`, inviteUrl)
+  }
+
   const handleJoinPlanAsInvitedFriend = (e: React.FormEvent) => {
     e.preventDefault()
     if (!planId || !invitedNameInput.trim()) return
@@ -567,13 +572,24 @@ export function EventPage() {
                               <span className={`size-2 rounded-full inline-block ${friend.hasResponded ? 'bg-green-500' : 'bg-amber-400'}`}></span>
                               {friend.name}
                             </span>
-                            <span className={`text-[11px] px-2 py-0.5 rounded font-medium border ${
-                              friend.hasResponded 
-                                ? 'bg-green-50 text-green-700 border-green-200' 
-                                : 'bg-amber-50 text-amber-700 border-amber-200'
-                            }`}>
-                              {friend.hasResponded ? 'Responded' : 'Pending Response'}
-                            </span>
+                            <div className="flex items-center gap-2">
+                              {!friend.hasResponded && (
+                                <button
+                                  type="button"
+                                  onClick={() => handleResendInvitation(friend.name)}
+                                  className="text-[11px] text-eb-blue hover:underline font-medium"
+                                >
+                                  Resend
+                                </button>
+                              )}
+                              <span className={`text-[11px] px-2 py-0.5 rounded font-medium border ${
+                                friend.hasResponded 
+                                  ? 'bg-green-50 text-green-700 border-green-200' 
+                                  : 'bg-amber-50 text-amber-700 border-amber-200'
+                              }`}>
+                                {friend.hasResponded ? 'Responded' : 'Pending Response'}
+                              </span>
+                            </div>
                           </div>
                           <div className="flex flex-wrap items-center justify-between gap-2 text-xs pt-1 border-t border-gray-200/60">
                             <div className="flex items-center gap-1.5">
