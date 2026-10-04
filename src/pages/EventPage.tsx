@@ -419,15 +419,24 @@ export function EventPage() {
                 </div>
               </div>
             ) : (
-              /* Organizer-side Friends & Status Section */
+              /* Organizer-side Invited Friends Section (P1 #2) */
               <div className="mt-6 border-t pt-4">
-                <h3 className="text-sm font-semibold text-eb-ink">Friends in this plan ({friends.length})</h3>
+                <div className="flex items-center justify-between">
+                  <h3 className="text-sm font-semibold text-eb-ink">Invited Friends ({friends.length})</h3>
+                  <span className="text-xs text-eb-gray">Status & Responses</span>
+                </div>
                 {friends.length > 0 ? (
                   <ul className="mt-2 space-y-3">
                     {friends.map((friend, idx) => (
-                      <li key={idx} className="text-sm bg-gray-50 p-3 rounded space-y-2">
-                        <div className="font-medium text-eb-ink">{friend.name}</div>
-                        <div className="flex flex-wrap items-center justify-between gap-2 text-xs">
+                      <li key={idx} className="text-sm bg-gray-50 p-3 rounded space-y-2 border border-gray-100">
+                        <div className="flex items-center justify-between">
+                          <span className="font-medium text-eb-ink flex items-center gap-1.5">
+                            <span className="size-2 rounded-full bg-eb-orange inline-block"></span>
+                            {friend.name}
+                          </span>
+                          <span className="text-[11px] text-gray-500 bg-white px-2 py-0.5 rounded border">Invited</span>
+                        </div>
+                        <div className="flex flex-wrap items-center justify-between gap-2 text-xs pt-1 border-t border-gray-200/60">
                           {/* Interest Response */}
                           <div className="flex items-center gap-1.5">
                             <span className="text-gray-500">Interest:</span>
@@ -441,7 +450,7 @@ export function EventPage() {
                             <select
                               value={friend.status}
                               onChange={(e) => handleStatusChange(idx, e.target.value as FriendStatus)}
-                              className="border rounded px-1 py-0.5 bg-white"
+                              className="border rounded px-1 py-0.5 bg-white text-xs"
                             >
                               <option value="Pending">Pending</option>
                               <option value="Interested">Interested</option>
@@ -462,7 +471,7 @@ export function EventPage() {
                             <select
                               value={friend.availability}
                               onChange={(e) => handleAvailabilityChange(idx, e.target.value as FriendAvailability)}
-                              className="border rounded px-1 py-0.5 bg-white"
+                              className="border rounded px-1 py-0.5 bg-white text-xs"
                             >
                               <option value="Unknown">Unknown</option>
                               <option value="Available">Available</option>
@@ -474,7 +483,7 @@ export function EventPage() {
                     ))}
                   </ul>
                 ) : (
-                  <p className="mt-1 text-xs text-gray-500">No friends added yet.</p>
+                  <p className="mt-2 text-xs text-gray-500 italic">No friends invited to this plan yet. Use "Invite Friends" below or add friends directly.</p>
                 )}
 
                 <form onSubmit={handleAddFriend} className="mt-3 flex gap-2">
@@ -509,7 +518,7 @@ export function EventPage() {
               <button
                 type="button"
                 onClick={() => setPlanCreated(false)}
-                className="h-11 w-full rounded border border-gray-300 bg-white px-3 text-lg leading-5 font-medium text-eb-ink hover:bg-gray-50"
+                className="h-11 work-full rounded border border-gray-300 bg-white px-3 text-lg leading-5 font-medium text-eb-ink hover:bg-gray-50"
               >
                 Back to Event Details
               </button>
