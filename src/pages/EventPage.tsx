@@ -99,6 +99,11 @@ export function EventPage() {
   const [friends, setFriends] = useState<Friend[]>([])
   const [friendInput, setFriendInput] = useState('')
 
+  // Invited Friend view states
+  const [isInvitedView, setIsInvitedView] = useState(false)
+  const [invitedNameInput, setInvitedNameInput] = useState('')
+  const [currentInvitedIndex, setCurrentInvitedIndex] = useState<number | null>(null)
+
   useEffect(() => {
     if (event) document.title = `${event.title} Tickets, ${event.dateLine[0] ?? ''} | Eventbrite`
     window.scrollTo(0, 0)
@@ -117,6 +122,7 @@ export function EventPage() {
           availability: f.availability || 'Unknown',
         }))
         setFriends(normalizedFriends)
+        setIsInvitedView(true)
         setPlanCreated(true)
       }
     }
@@ -160,6 +166,23 @@ export function EventPage() {
         availability: f.availability || 'Unknown',
       }))
       setFriends(normalizedFriends)
+    }
+  }
+
+  const handleJoinPlanAsInvitedFriend = (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!planId || !invitedNameInput.trim()) return
+    const updated = addFriendToPlan(planId, invitedNameInput)
+    if (updated) {
+      const normalizedFriends: Friend[] = updated.friends.map((f: any) => ({
+        name: typeof f === 'string' ? f : f.name,
+        status: f.status || 'Pending',
+        availability: f.availability || 'Unknown',
+      }))
+      setFriends(normalizedFriends)
+      const newIndex = normalizedFriends.findIndex((f) => f.name.toLowerCase() === invitedNameInput.trim().toLowerCase())
+      setCurrentInvitedIndex(newIndex >= 0 ? newIndex : normalizedFriends.length - 1)
+      setInvitedNameInput('')
     }
   }
 
@@ -231,6 +254,7 @@ export function EventPage() {
                 const plan = createPlan(event.id)
                 setPlanId(plan.id)
                 setFriends([])
+                setIsInvitedView(false)
                 setPlanCreated(true)
               }}
             />
@@ -242,7 +266,9 @@ export function EventPage() {
       {planCreated && (
         <div
           className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4"
-          onClick={() => setPlanCreated(false)}
+          onClick={() => {
+            if (!isInvitedView) setPlanCreated(false)
+          }}
         >
           <div
             role="dialog"
@@ -252,10 +278,12 @@ export function EventPage() {
             className="w-full max-w-md rounded bg-white p-8 shadow-[0_2px_8px_rgba(0,0,0,0.12)] max-h-[90vh] overflow-y-auto"
           >
             <h2 id="plan-created-title" className="text-xl font-semibold text-eb-purple">
-              Plan created
+              {isInvitedView ? 'You’re invited to a Plan with Friends!' : 'Plan created'}
             </h2>
             <p className="mt-3 text-[15px] leading-5 text-eb-gray">
-              Your Plan with Friends is saved and connected to this event.
+              {isInvitedView 
+                ? 'Your friend shared this plan with you for the following event:' 
+                : 'Your Plan with Friends is saved and connected to this event.'}
             </p> 
             <p className="mt-3 text-[15px] leading-5 text-eb-gray">
               {event.title}
@@ -268,80 +296,163 @@ export function EventPage() {
               Group discount available for eligible group bookings.
             </p>
 
-            {/* Friends, Interest & Availability Section (P0 Requirements) */}
-            <div className="mt-6 border-t pt-4">
-              <h3 className="text-sm font-semibold text-eb-ink">Friends in this plan ({friends.length})</h3>
-              {friends.length > 0 ? (
-                <ul className="mt-2 space-y-3">
-                  {friends.map((friend, idx) => (
-                    <li key={idx} className="text-sm bg-gray-50 p-3 rounded space-y-2">
-                      <div className="font-medium text-eb-ink">{friend.name}</div>
-                      <div className="flex flex-wrap items-center justify-between gap-2 text-xs">
-                        {/* Interest Response */}
-                        <div className="flex items-center gap-1.5">
-                          <span className="text-gray-500">Interest:</span>
-                          <span className={`px-2 py-0.5 rounded font-semibold ${
-                            friend.status === 'Going' ? 'bg-green-100 text-green-800' :
-                            friend.status === 'Interested' ? 'bg-blue-100 text-blue-800' :
+            {/* Invited Friend Interest Response Flow */}
+            {isInvitedView ? (
+              <div className="mt-6 border-t pt-4">
+                <h3 className="text-sm font-semibold text-eb-ink">Respond to this plan</h3>
+                {currentInvitedIndex !== null && friends[currentInvitedIndex] ? (
+                  <div className="mt-3 bg-gray-50 p-3 rounded space-y-2">
+                    <p className="text-xs text-gray-600">Responding as: <strong className="text-eb-ink">{friends[currentInvitedIndex].name}</strong></p>
+                    <div className="flex items-center justify-between text-xs pt-1">
+                      <span className="font-medium text-gray-700">Your Interest:</span>
+                      <div className="flex items-center gap-2">
+                        <span className={`px-2 py-0.5 rounded font-semibold ${
+                          friends[currentInvitedIndex].status === 'Going' ? 'bg-green-100 text-green-800' :
+                          friends[currentInvitedIndex].status === 'Interested' ? 'bg-blue-100 text-blue-800' :
+                          'bg-yellow-100 text-yellow-800'
+                        }`}>
+                          {friends[currentInvitedIndex].status}
+                        </span>
+                        <select
+                          value={friends[currentInvitedIndex].status}
+                          onChange={(e) => handleStatusChange(currentInvitedIndex, e.target.value as FriendStatus)}
+                          className="border rounded px-1.5 py-1 bg-white"
+                        >
+                          <option value="Pending">Pending</option>
+                          <option value="Interested">Interested</option>
+                          <option value="Going">Going</option>
+                        </select>
+                      </div>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => setCurrentInvitedIndex(null)}
+                      className="text-xs text-eb-blue underline pt-1 block"
+                    >
+                      Not {friends[currentInvitedIndex].name}? Switch name
+                    </button>
+                  </div>
+                ) : (
+                  <form onSubmit={handleJoinPlanAsInvitedFriend} className="mt-3 space-y-2">
+                    <p className="text-xs text-gray-600">Enter your name to join and submit your interest:</p>
+                    <div className="flex gap-2">
+                      <input
+                        type="text"
+                        placeholder="Your name"
+                        value={invitedNameInput}
+                        onChange={(e) => setInvitedNameInput(e.target.value)}
+                        className="flex-1 rounded border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:border-eb-orange"
+                        required
+                      />
+                      <button
+                        type="submit"
+                        className="rounded bg-eb-ink px-4 py-2 text-sm font-medium text-white hover:bg-gray-800"
+                      >
+                        Join Plan
+                      </button>
+                    </div>
+                  </form>
+                )}
+
+                {/* Summary of other friends in the plan */}
+                <div className="mt-4 pt-3 border-t">
+                  <h4 className="text-xs font-semibold text-eb-gray uppercase tracking-wider">Group Responses ({friends.length})</h4>
+                  {friends.length > 0 ? (
+                    <ul className="mt-2 space-y-1.5 max-h-32 overflow-y-auto">
+                      {friends.map((f, idx) => (
+                        <li key={idx} className="flex items-center justify-between text-xs bg-gray-50 px-2 py-1.5 rounded">
+                          <span className="text-eb-ink font-medium">{f.name}</span>
+                          <span className={`px-1.5 py-0.5 rounded font-semibold ${
+                            f.status === 'Going' ? 'bg-green-100 text-green-800' :
+                            f.status === 'Interested' ? 'bg-blue-100 text-blue-800' :
                             'bg-yellow-100 text-yellow-800'
                           }`}>
-                            {friend.status}
+                            {f.status}
                           </span>
-                          <select
-                            value={friend.status}
-                            onChange={(e) => handleStatusChange(idx, e.target.value as FriendStatus)}
-                            className="border rounded px-1 py-0.5 bg-white"
-                          >
-                            <option value="Pending">Pending</option>
-                            <option value="Interested">Interested</option>
-                            <option value="Going">Going</option>
-                          </select>
-                        </div>
+                        </li>
+                      ))}
+                    </ul>
+                  ) : (
+                    <p className="mt-1 text-xs text-gray-500">No responses yet.</p>
+                  )}
+                </div>
+              </div>
+            ) : (
+              /* Organizer-side Friends & Status Section */
+              <div className="mt-6 border-t pt-4">
+                <h3 className="text-sm font-semibold text-eb-ink">Friends in this plan ({friends.length})</h3>
+                {friends.length > 0 ? (
+                  <ul className="mt-2 space-y-3">
+                    {friends.map((friend, idx) => (
+                      <li key={idx} className="text-sm bg-gray-50 p-3 rounded space-y-2">
+                        <div className="font-medium text-eb-ink">{friend.name}</div>
+                        <div className="flex flex-wrap items-center justify-between gap-2 text-xs">
+                          {/* Interest Response */}
+                          <div className="flex items-center gap-1.5">
+                            <span className="text-gray-500">Interest:</span>
+                            <span className={`px-2 py-0.5 rounded font-semibold ${
+                              friend.status === 'Going' ? 'bg-green-100 text-green-800' :
+                              friend.status === 'Interested' ? 'bg-blue-100 text-blue-800' :
+                              'bg-yellow-100 text-yellow-800'
+                            }`}>
+                              {friend.status}
+                            </span>
+                            <select
+                              value={friend.status}
+                              onChange={(e) => handleStatusChange(idx, e.target.value as FriendStatus)}
+                              className="border rounded px-1 py-0.5 bg-white"
+                            >
+                              <option value="Pending">Pending</option>
+                              <option value="Interested">Interested</option>
+                              <option value="Going">Going</option>
+                            </select>
+                          </div>
 
-                        {/* Availability Response */}
-                        <div className="flex items-center gap-1.5">
-                          <span className="text-gray-500">Availability:</span>
-                          <span className={`px-2 py-0.5 rounded font-semibold ${
-                            friend.availability === 'Available' ? 'bg-emerald-100 text-emerald-800' :
-                            friend.availability === 'Busy' ? 'bg-rose-100 text-rose-800' :
-                            'bg-gray-200 text-gray-700'
-                          }`}>
-                            {friend.availability}
-                          </span>
-                          <select
-                            value={friend.availability}
-                            onChange={(e) => handleAvailabilityChange(idx, e.target.value as FriendAvailability)}
-                            className="border rounded px-1 py-0.5 bg-white"
-                          >
-                            <option value="Unknown">Unknown</option>
-                            <option value="Available">Available</option>
-                            <option value="Busy">Busy</option>
-                          </select>
+                          {/* Availability Response */}
+                          <div className="flex items-center gap-1.5">
+                            <span className="text-gray-500">Availability:</span>
+                            <span className={`px-2 py-0.5 rounded font-semibold ${
+                              friend.availability === 'Available' ? 'bg-emerald-100 text-emerald-800' :
+                              friend.availability === 'Busy' ? 'bg-rose-100 text-rose-800' :
+                              'bg-gray-200 text-gray-700'
+                            }`}>
+                              {friend.availability}
+                            </span>
+                            <select
+                              value={friend.availability}
+                              onChange={(e) => handleAvailabilityChange(idx, e.target.value as FriendAvailability)}
+                              className="border rounded px-1 py-0.5 bg-white"
+                            >
+                              <option value="Unknown">Unknown</option>
+                              <option value="Available">Available</option>
+                              <option value="Busy">Busy</option>
+                            </select>
+                          </div>
                         </div>
-                      </div>
-                    </li>
-                  ))}
-                </ul>
-              ) : (
-                <p className="mt-1 text-xs text-gray-500">No friends added yet.</p>
-              )}
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p className="mt-1 text-xs text-gray-500">No friends added yet.</p>
+                )}
 
-              <form onSubmit={handleAddFriend} className="mt-3 flex gap-2">
-                <input
-                  type="text"
-                  placeholder="Friend's name or email"
-                  value={friendInput}
-                  onChange={(e) => setFriendInput(e.target.value)}
-                  className="flex-1 rounded border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:border-eb-orange"
-                />
-                <button
-                  type="submit"
-                  className="rounded bg-eb-ink px-4 py-2 text-sm font-medium text-white hover:bg-gray-800"
-                >
-                  Add
-                </button>
-              </form>
-            </div>
+                <form onSubmit={handleAddFriend} className="mt-3 flex gap-2">
+                  <input
+                    type="text"
+                    placeholder="Friend's name or email"
+                    value={friendInput}
+                    onChange={(e) => setFriendInput(e.target.value)}
+                    className="flex-1 rounded border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:border-eb-orange"
+                  />
+                  <button
+                    type="submit"
+                    className="rounded bg-eb-ink px-4 py-2 text-sm font-medium text-white hover:bg-gray-800"
+                  >
+                    Add
+                  </button>
+                </form>
+              </div>
+            )}
 
             <div className="mt-6 flex flex-col gap-3">
               <button
@@ -354,13 +465,15 @@ export function EventPage() {
               >
                 Continue to Registration
               </button>
-              <button
-                type="button"
-                onClick={() => setInviteOpen(true)}                             
-                className="h-11 w-full rounded border border-gray-300 bg-white px-3 text-lg leading-5 font-medium text-eb-ink hover:bg-gray-50"
-              >
-                Invite Friends
-              </button>
+              {!isInvitedView && (
+                <button
+                  type="button"
+                  onClick={() => setInviteOpen(true)}                             
+                  className="h-11 w-full rounded border border-gray-300 bg-white px-3 text-lg leading-5 font-medium text-eb-ink hover:bg-gray-50"
+                >
+                  Invite Friends
+                </button>
+              )}
             </div>
           </div>
         </div>
