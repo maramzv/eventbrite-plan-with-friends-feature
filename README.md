@@ -7,7 +7,7 @@ The goal is to practice what a product team does in a real role: adding a featur
 ## Status
 
 - **Eventbrite foundation (Mara, branch `cloning-EB`)**: done. Homepage, event pages, and the ticket checkout popup.
-- **Plan with Friends feature (Michelle, own branch)**: not started in this branch. See `PRD-new-feature`.
+- **Plan with Friends feature (Michelle, branch `michelle-plan-with-friends`)**: complete. Built the full planning and invitation flow, including friend invitations, interest and availability responses, group response summaries, plan notes, invitation resending, registration flow, and Eventbrite-consistent interface design. All 24 PRD requirements completed and tested. See `PRD-new-feature`.
 
 ## Run it
 
