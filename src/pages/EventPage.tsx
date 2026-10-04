@@ -343,13 +343,25 @@ export function EventPage() {
               </form>
             </div>
 
-            <button
-              type="button"
-              onClick={() => setInviteOpen(true)}                             
-              className="mt-6 h-11 w-full rounded border-[1.6px] border-transparent bg-eb-orange px-3 text-lg leading-5 font-medium text-white"
-            >
-              Invite Friends
-            </button>
+            <div className="mt-6 flex flex-col gap-3">
+              <button
+                type="button"
+                onClick={() => {
+                  setPlanCreated(false)
+                  setCheckoutOpen(true)
+                }}
+                className="h-11 w-full rounded border-[1.6px] border-transparent bg-eb-orange px-3 text-lg leading-5 font-medium text-white"
+              >
+                Continue to Registration
+              </button>
+              <button
+                type="button"
+                onClick={() => setInviteOpen(true)}                             
+                className="h-11 w-full rounded border border-gray-300 bg-white px-3 text-lg leading-5 font-medium text-eb-ink hover:bg-gray-50"
+              >
+                Invite Friends
+              </button>
+            </div>
           </div>
         </div>
       )}
