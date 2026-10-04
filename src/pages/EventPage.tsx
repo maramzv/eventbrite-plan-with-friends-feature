@@ -14,7 +14,7 @@ import { Overview } from '../components/event/Overview'
 import { UrgencyTag } from '../components/event/UrgencyTag'
 import { getEventBySlug, icons, type EbEvent } from '../data'
 import { compactNumber } from '../utils/format'
-import { createPlan, getPlanById, addFriendToPlan } from '../utils/plans'
+import { createPlan, getPlanById, addFriendToPlan, updateFriendStatus, type Friend } from '../utils/plans'
 import { NotFound } from './NotFound'
 
 function OrganizerInfo({ event }: { event: EbEvent }) {
@@ -87,7 +87,7 @@ export function EventPage() {
   const [planCreated, setPlanCreated] = useState(false)
   const [inviteOpen, setInviteOpen] = useState(false)
   const [planId, setPlanId] = useState<string | null>(null)
-  const [friends, setFriends] = useState<string[]>([])
+  const [friends, setFriends] = useState<Friend[]>([])
   const [friendInput, setFriendInput] = useState('')
 
   useEffect(() => {
@@ -102,7 +102,10 @@ export function EventPage() {
       const existingPlan = getPlanById(incomingPlanId)
       if (existingPlan) {
         setPlanId(existingPlan.id)
-        setFriends(existingPlan.friends)
+        const normalizedFriends: Friend[] = existingPlan.friends.map((f) =>
+          typeof f === 'string' ? { name: f, status: 'Pending' } : f
+        )
+        setFriends(normalizedFriends)
         setPlanCreated(true)
       }
     }
@@ -113,8 +116,22 @@ export function EventPage() {
     if (!planId || !friendInput.trim()) return
     const updated = addFriendToPlan(planId, friendInput)
     if (updated) {
-      setFriends([...updated.friends])
+      const normalizedFriends: Friend[] = updated.friends.map((f) =>
+        typeof f === 'string' ? { name: f, status: 'Pending' } : f
+      )
+      setFriends(normalizedFriends)
       setFriendInput('')
+    }
+  }
+
+  const handleStatusChange = (index: number, status: 'Going' | 'Interested' | 'Pending') => {
+    if (!planId) return
+    const updated = updateFriendStatus(planId, index, status)
+    if (updated) {
+      const normalizedFriends: Friend[] = updated.friends.map((f) =>
+        typeof f === 'string' ? { name: f, status: 'Pending' } : f
+      )
+      setFriends(normalizedFriends)
     }
   }
 
@@ -185,7 +202,7 @@ export function EventPage() {
               onPlanWithFriends={() => {
                 const plan = createPlan(event.id)
                 setPlanId(plan.id)
-                setFriends(plan.friends)
+                setFriends([])
                 setPlanCreated(true)
               }}
             />
@@ -223,14 +240,32 @@ export function EventPage() {
               Group discount available for eligible group bookings.
             </p>
 
-            {/* Add Friends Section (P0 Requirement) */}
+            {/* Friends & Status Response Section (P0 Requirement) */}
             <div className="mt-6 border-t pt-4">
               <h3 className="text-sm font-semibold text-eb-ink">Friends in this plan ({friends.length})</h3>
               {friends.length > 0 ? (
-                <ul className="mt-2 space-y-1">
+                <ul className="mt-2 space-y-2">
                   {friends.map((friend, idx) => (
-                    <li key={idx} className="text-sm text-eb-gray bg-gray-50 px-3 py-1.5 rounded">
-                      • {friend}
+                    <li key={idx} className="flex items-center justify-between text-sm bg-gray-50 px-3 py-2 rounded">
+                      <span className="font-medium text-eb-ink">{friend.name}</span>
+                      <div className="flex items-center gap-2">
+                        <span className={`text-xs px-2 py-0.5 rounded font-semibold ${
+                          friend.status === 'Going' ? 'bg-green-100 text-green-800' :
+                          friend.status === 'Interested' ? 'bg-blue-100 text-blue-800' :
+                          'bg-yellow-100 text-yellow-800'
+                        }`}>
+                          {friend.status}
+                        </span>
+                        <select
+                          value={friend.status}
+                          onChange={(e) => handleStatusChange(idx, e.target.value as any)}
+                          className="text-xs border rounded px-1 py-1 bg-white"
+                        >
+                          <option value="Pending">Pending</option>
+                          <option value="Interested">Interested</option>
+                          <option value="Going">Going</option>
+                        </select>
+                      </div>
                     </li>
                   ))}
                 </ul>

@@ -1,8 +1,15 @@
+export type FriendStatus = 'Going' | 'Interested' | 'Pending'
+
+export type Friend = {
+  name: string
+  status: FriendStatus
+}
+
 export type FriendPlan = {
   id: string
   eventId: string
   createdAt: string
-  friends: string[]
+  friends: Friend[]
 }
 
 const STORAGE_KEY = 'pwf-plans'
@@ -38,13 +45,34 @@ export function getPlanById(id: string): FriendPlan | null {
   return plans.find((p) => p.id === id) || null
 }
 
-/** Adds a friend name to an existing plan and updates localStorage. */
+/** Adds a friend to an existing plan with a default 'Pending' status. */
 export function addFriendToPlan(planId: string, friendName: string): FriendPlan | null {
   const plans = readPlans()
   const plan = plans.find((p) => p.id === planId)
   if (!plan || !friendName.trim()) return null
 
-  plan.friends.push(friendName.trim())
+  // Support backward compatibility if old plans stored strings
+  plan.friends = plan.friends.map((f) => 
+    typeof f === 'string' ? { name: f, status: 'Pending' as FriendStatus } : f
+  )
+
+  plan.friends.push({ name: friendName.trim(), status: 'Pending' })
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(plans))
+  return plan
+}
+
+/** Updates a friend's interest status in the plan. */
+export function updateFriendStatus(planId: string, friendIndex: number, status: FriendStatus): FriendPlan | null {
+  const plans = readPlans()
+  const plan = plans.find((p) => p.id === planId)
+  if (!plan || !plan.friends[friendIndex]) return null
+
+  // Ensure items are objects
+  plan.friends = plan.friends.map((f) => 
+    typeof f === 'string' ? { name: f, status: 'Pending' as FriendStatus } : f
+  )
+
+  plan.friends[friendIndex].status = status
   localStorage.setItem(STORAGE_KEY, JSON.stringify(plans))
   return plan
 }
