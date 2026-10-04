@@ -400,9 +400,9 @@ export function EventPage() {
               Group discount available for eligible group bookings.
             </p>
 
-            {/* Invited Friend Interest & Availability Response Flow */}
+            {/* Invited Friend Interest & Availability Response Flow & Invited Friends List (P2 #3) */}
             {isInvitedView ? (
-              <div className="mt-6 border-t pt-4">
+              <div className="mt-6 border-t pt-4 space-y-4">
                 <h3 className="text-sm font-semibold text-eb-ink">Respond to this plan</h3>
                 {currentInvitedIndex !== null && friends[currentInvitedIndex] ? (
                   <div className="mt-3 bg-gray-50 p-3 rounded space-y-3">
@@ -482,8 +482,29 @@ export function EventPage() {
                   </form>
                 )}
 
+                {/* P2 #3: Invited Friend can view which other friends are invited */}
                 <div className="mt-4 pt-3 border-t">
-                  <h4 className="text-xs font-semibold text-eb-gray uppercase tracking-wider">Group Responses ({friends.length})</h4>
+                  <h4 className="text-xs font-semibold text-eb-gray uppercase tracking-wider">Invited Friends ({friends.length})</h4>
+                  {friends.length > 0 ? (
+                    <ul className="mt-2 space-y-1.5 max-h-36 overflow-y-auto">
+                      {friends.map((f: Friend, idx: number) => (
+                        <li key={idx} className="flex items-center justify-between text-xs bg-gray-50 px-2.5 py-2 rounded border border-gray-100">
+                          <span className="text-eb-ink font-medium flex items-center gap-1.5">
+                            <span className="size-1.5 rounded-full bg-eb-orange inline-block"></span>
+                            {f.name}
+                          </span>
+                          <span className="text-[11px] text-gray-500 bg-white px-2 py-0.5 rounded border">Invited</span>
+                        </li>
+                      ))}
+                    </ul>
+                  ) : (
+                    <p className="mt-1 text-xs text-gray-500">No other friends invited yet.</p>
+                  )}
+                </div>
+
+                {/* Summary of group responses */}
+                <div className="mt-4 pt-3 border-t">
+                  <h4 className="text-xs font-semibold text-eb-gray uppercase tracking-wider">Group Responses</h4>
                   {friends.length > 0 ? (
                     <ul className="mt-2 space-y-1.5 max-h-36 overflow-y-auto">
                       {friends.map((f: Friend, idx: number) => (
