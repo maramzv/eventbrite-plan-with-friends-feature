@@ -98,6 +98,7 @@ export function EventPage() {
   const [inviteOpen, setInviteOpen] = useState<boolean>(false)
   const [planId, setPlanId] = useState<string | null>(null)
   const [organizerName, setOrganizerName] = useState<string>('')
+  const [planNote, setPlanNote] = useState<string>('')
   const [showOrganizerPrompt, setShowOrganizerPrompt] = useState<boolean>(false)
   const [friends, setFriends] = useState<Friend[]>([])
   const [friendInput, setFriendInput] = useState<string>('')
@@ -105,6 +106,7 @@ export function EventPage() {
   // Invited Friend view states
   const [isInvitedView, setIsInvitedView] = useState<boolean>(false)
   const [inviterNameDisplay, setInviterNameDisplay] = useState<string>('Your friend')
+  const [planNoteDisplay, setPlanNoteDisplay] = useState<string>('')
   const [invitedNameInput, setInvitedNameInput] = useState<string>('')
   const [currentInvitedIndex, setCurrentInvitedIndex] = useState<number | null>(null)
 
@@ -123,6 +125,9 @@ export function EventPage() {
         if (existingPlan.organizerName) {
           setInviterNameDisplay(existingPlan.organizerName)
         }
+        if (existingPlan.note) {
+          setPlanNoteDisplay(existingPlan.note)
+        }
         const normalizedFriends: Friend[] = existingPlan.friends.map((f: Friend) => ({
           name: f.name,
           status: f.status || 'Pending',
@@ -139,8 +144,9 @@ export function EventPage() {
   const handleStartPlan = (e: React.FormEvent) => {
     e.preventDefault()
     if (!event) return
-    const plan: Plan = createPlan(event.id, organizerName || 'Organizer')
+    const plan: Plan = createPlan(event.id, organizerName || 'Organizer', planNote)
     setPlanId(plan.id)
+    setPlanNoteDisplay(plan.note || '')
     setFriends([])
     setIsInvitedView(false)
     setShowOrganizerPrompt(false)
@@ -283,6 +289,7 @@ export function EventPage() {
       <EventFooter />
       {checkoutOpen && <CheckoutModal event={event} onClose={() => setCheckoutOpen(false)} />}
       
+      {/* Organizer Name & Note Prompt Modal */}
       {showOrganizerPrompt && (
         <div
           className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4"
@@ -305,7 +312,7 @@ export function EventPage() {
             </button>
             <h2 id="organizer-prompt-title" className="text-xl font-semibold text-eb-purple">Start a Plan with Friends</h2>
             <p className="mt-2 text-[15px] leading-5 text-eb-gray">
-              Enter your name so invited friends know who created this plan.
+              Enter your name and an optional note for your friends.
             </p>
             <form onSubmit={handleStartPlan} className="mt-4 space-y-4">
               <div>
@@ -319,6 +326,15 @@ export function EventPage() {
                   required
                 />
               </div>
+              <div>
+                <label className="block text-xs font-semibold text-eb-ink uppercase mb-1">Note (Optional)</label>
+                <textarea
+                  placeholder="e.g. Let's grab dinner beforehand!"
+                  value={planNote}
+                  onChange={(e) => setPlanNote(e.target.value)}
+                  className="w-full rounded border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:border-eb-orange h-20 resize-none"
+                />
+              </div>
               <button
                 type="submit"
                 className="h-11 w-full rounded bg-eb-orange text-lg leading-5 font-medium text-white"
@@ -330,6 +346,7 @@ export function EventPage() {
         </div>
       )}
 
+      {/* Plan Planning Space Modal */}
       {planCreated && (
         <div
           className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4"
@@ -358,6 +375,15 @@ export function EventPage() {
                 ? `${inviterNameDisplay} shared this plan with you for the following event:` 
                 : 'Your Plan with Friends is saved and connected to this event.'}
             </p> 
+
+            {/* Display Plan Note if present */}
+            {planNoteDisplay && (
+              <div className="mt-3 bg-orange-50 border border-orange-200 p-3 rounded text-xs text-eb-ink">
+                <span className="font-semibold text-eb-orange uppercase tracking-wider block mb-1">Note from {inviterNameDisplay}:</span>
+                <p className="italic">"{planNoteDisplay}"</p>
+              </div>
+            )}
+
             <p className="mt-3 text-[15px] leading-5 text-eb-gray">
               {event.title}
               <br />
@@ -369,6 +395,7 @@ export function EventPage() {
               Group discount available for eligible group bookings.
             </p>
 
+            {/* Invited Friend Interest & Availability Response Flow */}
             {isInvitedView ? (
               <div className="mt-6 border-t pt-4">
                 <h3 className="text-sm font-semibold text-eb-ink">Respond to this plan</h3>

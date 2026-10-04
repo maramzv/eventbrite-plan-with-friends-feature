@@ -12,6 +12,7 @@ export interface Plan {
   id: string
   eventId: string
   organizerName?: string
+  note?: string
   friends: Friend[]
   createdAt: string
 }
@@ -35,12 +36,13 @@ function saveStoredPlans(plans: Plan[]): void {
   }
 }
 
-export function createPlan(eventId: string, organizerName?: string): Plan {
+export function createPlan(eventId: string, organizerName?: string, note?: string): Plan {
   const plans = getStoredPlans()
   const newPlan: Plan = {
     id: Math.random().toString(36).substring(2, 9),
     eventId,
     organizerName: organizerName?.trim() || 'Your friend',
+    note: note?.trim() || '',
     friends: [],
     createdAt: new Date().toISOString(),
   }
