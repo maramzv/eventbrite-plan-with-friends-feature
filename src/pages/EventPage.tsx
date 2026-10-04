@@ -266,17 +266,23 @@ export function EventPage() {
       {planCreated && (
         <div
           className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4"
-          onClick={() => {
-            if (!isInvitedView) setPlanCreated(false)
-          }}
+          onClick={() => setPlanCreated(false)}
         >
           <div
             role="dialog"
             aria-modal="true"
             aria-labelledby="plan-created-title"
             onClick={(e) => e.stopPropagation()}
-            className="w-full max-w-md rounded bg-white p-8 shadow-[0_2px_8px_rgba(0,0,0,0.12)] max-h-[90vh] overflow-y-auto"
+            className="w-full max-w-md rounded bg-white p-8 shadow-[0_2px_8px_rgba(0,0,0,0.12)] max-h-[90vh] overflow-y-auto relative"
           >
+            <button
+              type="button"
+              onClick={() => setPlanCreated(false)}
+              aria-label="Return to event details"
+              className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 text-xl font-bold"
+            >
+              ×
+            </button>
             <h2 id="plan-created-title" className="text-xl font-semibold text-eb-purple">
               {isInvitedView ? 'You’re invited to a Plan with Friends!' : 'Plan created'}
             </h2>
@@ -499,6 +505,13 @@ export function EventPage() {
                 className="h-11 w-full rounded border-[1.6px] border-transparent bg-eb-orange px-3 text-lg leading-5 font-medium text-white"
               >
                 Continue to Registration
+              </button>
+              <button
+                type="button"
+                onClick={() => setPlanCreated(false)}
+                className="h-11 w-full rounded border border-gray-300 bg-white px-3 text-lg leading-5 font-medium text-eb-ink hover:bg-gray-50"
+              >
+                Back to Event Details
               </button>
               {!isInvitedView && (
                 <button
