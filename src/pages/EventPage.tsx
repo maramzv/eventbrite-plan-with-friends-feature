@@ -22,7 +22,8 @@ import {
   updateFriendAvailability,
   type Friend, 
   type FriendStatus, 
-  type FriendAvailability 
+  type FriendAvailability,
+  type Plan
 } from '../utils/plans'
 import { NotFound } from './NotFound'
 
@@ -92,16 +93,19 @@ export function EventPage() {
   const [searchParams] = useSearchParams()
   const event = getEventBySlug(slug)
   
-  const [checkoutOpen, setCheckoutOpen] = useState(false)
-  const [planCreated, setPlanCreated] = useState(false)
-  const [inviteOpen, setInviteOpen] = useState(false)
+  const [checkoutOpen, setCheckoutOpen] = useState<boolean>(false)
+  const [planCreated, setPlanCreated] = useState<boolean>(false)
+  const [inviteOpen, setInviteOpen] = useState<boolean>(false)
   const [planId, setPlanId] = useState<string | null>(null)
+  const [organizerName, setOrganizerName] = useState<string>('')
+  const [showOrganizerPrompt, setShowOrganizerPrompt] = useState<boolean>(false)
   const [friends, setFriends] = useState<Friend[]>([])
-  const [friendInput, setFriendInput] = useState('')
+  const [friendInput, setFriendInput] = useState<string>('')
 
   // Invited Friend view states
-  const [isInvitedView, setIsInvitedView] = useState(false)
-  const [invitedNameInput, setInvitedNameInput] = useState('')
+  const [isInvitedView, setIsInvitedView] = useState<boolean>(false)
+  const [inviterNameDisplay, setInviterNameDisplay] = useState<string>('Your friend')
+  const [invitedNameInput, setInvitedNameInput] = useState<string>('')
   const [currentInvitedIndex, setCurrentInvitedIndex] = useState<number | null>(null)
 
   useEffect(() => {
@@ -113,11 +117,14 @@ export function EventPage() {
   useEffect(() => {
     const incomingPlanId = searchParams.get('plan')
     if (incomingPlanId) {
-      const existingPlan = getPlanById(incomingPlanId)
+      const existingPlan: Plan | null = getPlanById(incomingPlanId)
       if (existingPlan) {
         setPlanId(existingPlan.id)
-        const normalizedFriends: Friend[] = existingPlan.friends.map((f: any) => ({
-          name: typeof f === 'string' ? f : f.name,
+        if (existingPlan.organizerName) {
+          setInviterNameDisplay(existingPlan.organizerName)
+        }
+        const normalizedFriends: Friend[] = existingPlan.friends.map((f: Friend) => ({
+          name: f.name,
           status: f.status || 'Pending',
           availability: f.availability || 'Unknown',
           hasResponded: !!f.hasResponded,
@@ -129,13 +136,24 @@ export function EventPage() {
     }
   }, [searchParams])
 
+  const handleStartPlan = (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!event) return
+    const plan: Plan = createPlan(event.id, organizerName || 'Organizer')
+    setPlanId(plan.id)
+    setFriends([])
+    setIsInvitedView(false)
+    setShowOrganizerPrompt(false)
+    setPlanCreated(true)
+  }
+
   const handleAddFriend = (e: React.FormEvent) => {
     e.preventDefault()
     if (!planId || !friendInput.trim()) return
-    const updated = addFriendToPlan(planId, friendInput)
+    const updated: Plan | null = addFriendToPlan(planId, friendInput)
     if (updated) {
-      const normalizedFriends: Friend[] = updated.friends.map((f: any) => ({
-        name: typeof f === 'string' ? f : f.name,
+      const normalizedFriends: Friend[] = updated.friends.map((f: Friend) => ({
+        name: f.name,
         status: f.status || 'Pending',
         availability: f.availability || 'Unknown',
         hasResponded: !!f.hasResponded,
@@ -147,10 +165,10 @@ export function EventPage() {
 
   const handleStatusChange = (index: number, status: FriendStatus) => {
     if (!planId) return
-    const updated = updateFriendStatus(planId, index, status)
+    const updated: Plan | null = updateFriendStatus(planId, index, status)
     if (updated) {
-      const normalizedFriends: Friend[] = updated.friends.map((f: any) => ({
-        name: typeof f === 'string' ? f : f.name,
+      const normalizedFriends: Friend[] = updated.friends.map((f: Friend) => ({
+        name: f.name,
         status: f.status || 'Pending',
         availability: f.availability || 'Unknown',
         hasResponded: !!f.hasResponded,
@@ -161,10 +179,10 @@ export function EventPage() {
 
   const handleAvailabilityChange = (index: number, availability: FriendAvailability) => {
     if (!planId) return
-    const updated = updateFriendAvailability(planId, index, availability)
+    const updated: Plan | null = updateFriendAvailability(planId, index, availability)
     if (updated) {
-      const normalizedFriends: Friend[] = updated.friends.map((f: any) => ({
-        name: typeof f === 'string' ? f : f.name,
+      const normalizedFriends: Friend[] = updated.friends.map((f: Friend) => ({
+        name: f.name,
         status: f.status || 'Pending',
         availability: f.availability || 'Unknown',
         hasResponded: !!f.hasResponded,
@@ -176,10 +194,10 @@ export function EventPage() {
   const handleJoinPlanAsInvitedFriend = (e: React.FormEvent) => {
     e.preventDefault()
     if (!planId || !invitedNameInput.trim()) return
-    const updated = addFriendToPlan(planId, invitedNameInput)
+    const updated: Plan | null = addFriendToPlan(planId, invitedNameInput)
     if (updated) {
-      const normalizedFriends: Friend[] = updated.friends.map((f: any) => ({
-        name: typeof f === 'string' ? f : f.name,
+      const normalizedFriends: Friend[] = updated.friends.map((f: Friend) => ({
+        name: f.name,
         status: f.status || 'Pending',
         availability: f.availability || 'Unknown',
         hasResponded: !!f.hasResponded,
@@ -256,11 +274,7 @@ export function EventPage() {
               event={event}
               onCheckout={() => setCheckoutOpen(true)}
               onPlanWithFriends={() => {
-                const plan = createPlan(event.id)
-                setPlanId(plan.id)
-                setFriends([])
-                setIsInvitedView(false)
-                setPlanCreated(true)
+                setShowOrganizerPrompt(true)
               }}
             />
           </aside>
@@ -268,6 +282,54 @@ export function EventPage() {
       </main>
       <EventFooter />
       {checkoutOpen && <CheckoutModal event={event} onClose={() => setCheckoutOpen(false)} />}
+      
+      {showOrganizerPrompt && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4"
+          onClick={() => setShowOrganizerPrompt(false)}
+        >
+          <div
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="organizer-prompt-title"
+            onClick={(e) => e.stopPropagation()}
+            className="w-full max-w-md rounded bg-white p-8 shadow-[0_2px_8px_rgba(0,0,0,0.12)] relative"
+          >
+            <button
+              type="button"
+              onClick={() => setShowOrganizerPrompt(false)}
+              aria-label="Close"
+              className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 text-xl font-bold"
+            >
+              ×
+            </button>
+            <h2 id="organizer-prompt-title" className="text-xl font-semibold text-eb-purple">Start a Plan with Friends</h2>
+            <p className="mt-2 text-[15px] leading-5 text-eb-gray">
+              Enter your name so invited friends know who created this plan.
+            </p>
+            <form onSubmit={handleStartPlan} className="mt-4 space-y-4">
+              <div>
+                <label className="block text-xs font-semibold text-eb-ink uppercase mb-1">Your Name</label>
+                <input
+                  type="text"
+                  placeholder="e.g. Alex"
+                  value={organizerName}
+                  onChange={(e) => setOrganizerName(e.target.value)}
+                  className="w-full rounded border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:border-eb-orange"
+                  required
+                />
+              </div>
+              <button
+                type="submit"
+                className="h-11 w-full rounded bg-eb-orange text-lg leading-5 font-medium text-white"
+              >
+                Continue to Plan
+              </button>
+            </form>
+          </div>
+        </div>
+      )}
+
       {planCreated && (
         <div
           className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4"
@@ -289,11 +351,11 @@ export function EventPage() {
               ×
             </button>
             <h2 id="plan-created-title" className="text-xl font-semibold text-eb-purple">
-              {isInvitedView ? 'You’re invited to a Plan with Friends!' : 'Plan created'}
+              {isInvitedView ? `${inviterNameDisplay} invited you to a Plan with Friends!` : 'Plan created'}
             </h2>
             <p className="mt-3 text-[15px] leading-5 text-eb-gray">
               {isInvitedView 
-                ? 'Your friend shared this plan with you for the following event:' 
+                ? `${inviterNameDisplay} shared this plan with you for the following event:` 
                 : 'Your Plan with Friends is saved and connected to this event.'}
             </p> 
             <p className="mt-3 text-[15px] leading-5 text-eb-gray">
@@ -307,7 +369,6 @@ export function EventPage() {
               Group discount available for eligible group bookings.
             </p>
 
-            {/* Invited Friend Interest & Availability Response Flow */}
             {isInvitedView ? (
               <div className="mt-6 border-t pt-4">
                 <h3 className="text-sm font-semibold text-eb-ink">Respond to this plan</h3>
@@ -315,7 +376,6 @@ export function EventPage() {
                   <div className="mt-3 bg-gray-50 p-3 rounded space-y-3">
                     <p className="text-xs text-gray-600">Responding as: <strong className="text-eb-ink">{friends[currentInvitedIndex].name}</strong></p>
                     
-                    {/* Interest Response */}
                     <div className="flex items-center justify-between text-xs pt-1">
                       <span className="font-medium text-gray-700">Your Interest:</span>
                       <div className="flex items-center gap-2">
@@ -338,7 +398,6 @@ export function EventPage() {
                       </div>
                     </div>
 
-                    {/* Availability Response */}
                     <div className="flex items-center justify-between text-xs pt-1">
                       <span className="font-medium text-gray-700">Your Availability:</span>
                       <div className="flex items-center gap-2">
@@ -391,12 +450,11 @@ export function EventPage() {
                   </form>
                 )}
 
-                {/* Summary of other friends in the plan */}
                 <div className="mt-4 pt-3 border-t">
                   <h4 className="text-xs font-semibold text-eb-gray uppercase tracking-wider">Group Responses ({friends.length})</h4>
                   {friends.length > 0 ? (
                     <ul className="mt-2 space-y-1.5 max-h-36 overflow-y-auto">
-                      {friends.map((f, idx) => (
+                      {friends.map((f: Friend, idx: number) => (
                         <li key={idx} className="flex items-center justify-between text-xs bg-gray-50 px-2 py-1.5 rounded">
                           <span className="text-eb-ink font-medium">{f.name}</span>
                           <div className="flex items-center gap-1.5">
@@ -424,55 +482,50 @@ export function EventPage() {
                 </div>
               </div>
             ) : (
-              /* Organizer-side Invited Friends Section & Group Response Summary (P1 #4) */
               <div className="mt-6 border-t pt-4 space-y-5">
-                {/* Aggregate Group Response Summary */}
                 <div className="bg-gray-50 p-3.5 rounded border border-gray-200/80 space-y-3">
                   <div className="flex items-center justify-between">
                     <h3 className="text-xs font-bold text-eb-ink uppercase tracking-wider">Group Response Summary</h3>
                     <span className="text-xs font-medium text-eb-gray">
-                      {friends.filter(f => f.hasResponded).length} of {friends.length} Responded
+                      {friends.filter((f: Friend) => f.hasResponded).length} of {friends.length} Responded
                     </span>
                   </div>
 
                   <div className="grid grid-cols-2 gap-3 text-xs pt-1">
-                    {/* Interest Counts */}
                     <div className="bg-white p-2.5 rounded border border-gray-200/60 space-y-1">
                       <p className="font-semibold text-gray-600 mb-1.5">Interest Breakdown</p>
                       <div className="flex justify-between items-center text-gray-700">
                         <span className="flex items-center gap-1"><span className="size-2 rounded-full bg-green-500 inline-block"></span>Going</span>
-                        <span className="font-bold">{friends.filter(f => f.status === 'Going').length}</span>
+                        <span className="font-bold">{friends.filter((f: Friend) => f.status === 'Going').length}</span>
                       </div>
                       <div className="flex justify-between items-center text-gray-700">
                         <span className="flex items-center gap-1"><span className="size-2 rounded-full bg-blue-500 inline-block"></span>Interested</span>
-                        <span className="font-bold">{friends.filter(f => f.status === 'Interested').length}</span>
+                        <span className="font-bold">{friends.filter((f: Friend) => f.status === 'Interested').length}</span>
                       </div>
                       <div className="flex justify-between items-center text-gray-700">
                         <span className="flex items-center gap-1"><span className="size-2 rounded-full bg-yellow-500 inline-block"></span>Pending</span>
-                        <span className="font-bold">{friends.filter(f => f.status === 'Pending').length}</span>
+                        <span className="font-bold">{friends.filter((f: Friend) => f.status === 'Pending').length}</span>
                       </div>
                     </div>
 
-                    {/* Availability Counts */}
                     <div className="bg-white p-2.5 rounded border border-gray-200/60 space-y-1">
                       <p className="font-semibold text-gray-600 mb-1.5">Availability Breakdown</p>
                       <div className="flex justify-between items-center text-gray-700">
                         <span className="flex items-center gap-1"><span className="size-2 rounded-full bg-emerald-500 inline-block"></span>Available</span>
-                        <span className="font-bold">{friends.filter(f => f.availability === 'Available').length}</span>
+                        <span className="font-bold">{friends.filter((f: Friend) => f.availability === 'Available').length}</span>
                       </div>
                       <div className="flex justify-between items-center text-gray-700">
                         <span className="flex items-center gap-1"><span className="size-2 rounded-full bg-rose-500 inline-block"></span>Busy</span>
-                        <span className="font-bold">{friends.filter(f => f.availability === 'Busy').length}</span>
+                        <span className="font-bold">{friends.filter((f: Friend) => f.availability === 'Busy').length}</span>
                       </div>
                       <div className="flex justify-between items-center text-gray-700">
                         <span className="flex items-center gap-1"><span className="size-2 rounded-full bg-gray-400 inline-block"></span>Unknown</span>
-                        <span className="font-bold">{friends.filter(f => f.availability === 'Unknown').length}</span>
+                        <span className="font-bold">{friends.filter((f: Friend) => f.availability === 'Unknown').length}</span>
                       </div>
                     </div>
                   </div>
                 </div>
 
-                {/* Invited Friends List */}
                 <div>
                   <div className="flex items-center justify-between">
                     <h3 className="text-sm font-semibold text-eb-ink">Invited Friends ({friends.length})</h3>
@@ -480,7 +533,7 @@ export function EventPage() {
                   </div>
                   {friends.length > 0 ? (
                     <ul className="mt-2 space-y-3">
-                      {friends.map((friend, idx) => (
+                      {friends.map((friend: Friend, idx: number) => (
                         <li key={idx} className="text-sm bg-gray-50 p-3 rounded space-y-2 border border-gray-100">
                           <div className="flex items-center justify-between">
                             <span className="font-medium text-eb-ink flex items-center gap-1.5">
@@ -496,7 +549,6 @@ export function EventPage() {
                             </span>
                           </div>
                           <div className="flex flex-wrap items-center justify-between gap-2 text-xs pt-1 border-t border-gray-200/60">
-                            {/* Interest Response */}
                             <div className="flex items-center gap-1.5">
                               <span className="text-gray-500">Interest:</span>
                               <span className={`px-2 py-0.5 rounded font-semibold ${
@@ -517,7 +569,6 @@ export function EventPage() {
                               </select>
                             </div>
 
-                            {/* Availability Response */}
                             <div className="flex items-center gap-1.5">
                               <span className="text-gray-500">Availability:</span>
                               <span className={`px-2 py-0.5 rounded font-semibold ${

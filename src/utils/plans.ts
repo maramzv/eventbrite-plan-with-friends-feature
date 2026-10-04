@@ -11,6 +11,7 @@ export interface Friend {
 export interface Plan {
   id: string
   eventId: string
+  organizerName?: string
   friends: Friend[]
   createdAt: string
 }
@@ -20,13 +21,13 @@ const PLANS_STORAGE_KEY = 'eb_plans'
 function getStoredPlans(): Plan[] {
   try {
     const data = localStorage.getItem(PLANS_STORAGE_KEY)
-    return data ? JSON.parse(data) : []
+    return data ? (JSON.parse(data) as Plan[]) : []
   } catch {
     return []
   }
 }
 
-function saveStoredPlans(plans: Plan[]) {
+function saveStoredPlans(plans: Plan[]): void {
   try {
     localStorage.setItem(PLANS_STORAGE_KEY, JSON.stringify(plans))
   } catch {
@@ -34,11 +35,12 @@ function saveStoredPlans(plans: Plan[]) {
   }
 }
 
-export function createPlan(eventId: string): Plan {
+export function createPlan(eventId: string, organizerName?: string): Plan {
   const plans = getStoredPlans()
   const newPlan: Plan = {
     id: Math.random().toString(36).substring(2, 9),
     eventId,
+    organizerName: organizerName?.trim() || 'Your friend',
     friends: [],
     createdAt: new Date().toISOString(),
   }
