@@ -1,8 +1,10 @@
 export type FriendStatus = 'Going' | 'Interested' | 'Pending'
+export type FriendAvailability = 'Available' | 'Busy' | 'Unknown'
 
 export type Friend = {
   name: string
   status: FriendStatus
+  availability: FriendAvailability
 }
 
 export type FriendPlan = {
@@ -45,18 +47,20 @@ export function getPlanById(id: string): FriendPlan | null {
   return plans.find((p) => p.id === id) || null
 }
 
-/** Adds a friend to an existing plan with a default 'Pending' status. */
+/** Adds a friend to an existing plan with default 'Pending' status and 'Unknown' availability. */
 export function addFriendToPlan(planId: string, friendName: string): FriendPlan | null {
   const plans = readPlans()
   const plan = plans.find((p) => p.id === planId)
   if (!plan || !friendName.trim()) return null
 
-  // Support backward compatibility if old plans stored strings
-  plan.friends = plan.friends.map((f) => 
-    typeof f === 'string' ? { name: f, status: 'Pending' as FriendStatus } : f
-  )
+  // Backward compatibility normalization for old data formats
+  plan.friends = plan.friends.map((f: any) => ({
+    name: typeof f === 'string' ? f : f.name,
+    status: f.status || 'Pending',
+    availability: f.availability || 'Unknown',
+  }))
 
-  plan.friends.push({ name: friendName.trim(), status: 'Pending' })
+  plan.friends.push({ name: friendName.trim(), status: 'Pending', availability: 'Unknown' })
   localStorage.setItem(STORAGE_KEY, JSON.stringify(plans))
   return plan
 }
@@ -67,12 +71,30 @@ export function updateFriendStatus(planId: string, friendIndex: number, status: 
   const plan = plans.find((p) => p.id === planId)
   if (!plan || !plan.friends[friendIndex]) return null
 
-  // Ensure items are objects
-  plan.friends = plan.friends.map((f) => 
-    typeof f === 'string' ? { name: f, status: 'Pending' as FriendStatus } : f
-  )
+  plan.friends = plan.friends.map((f: any) => ({
+    name: typeof f === 'string' ? f : f.name,
+    status: f.status || 'Pending',
+    availability: f.availability || 'Unknown',
+  }))
 
   plan.friends[friendIndex].status = status
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(plans))
+  return plan
+}
+
+/** Updates a friend's availability response in the plan. */
+export function updateFriendAvailability(planId: string, friendIndex: number, availability: FriendAvailability): FriendPlan | null {
+  const plans = readPlans()
+  const plan = plans.find((p) => p.id === planId)
+  if (!plan || !plan.friends[friendIndex]) return null
+
+  plan.friends = plan.friends.map((f: any) => ({
+    name: typeof f === 'string' ? f : f.name,
+    status: f.status || 'Pending',
+    availability: f.availability || 'Unknown',
+  }))
+
+  plan.friends[friendIndex].availability = availability
   localStorage.setItem(STORAGE_KEY, JSON.stringify(plans))
   return plan
 }

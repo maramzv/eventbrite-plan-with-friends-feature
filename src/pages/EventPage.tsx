@@ -14,7 +14,16 @@ import { Overview } from '../components/event/Overview'
 import { UrgencyTag } from '../components/event/UrgencyTag'
 import { getEventBySlug, icons, type EbEvent } from '../data'
 import { compactNumber } from '../utils/format'
-import { createPlan, getPlanById, addFriendToPlan, updateFriendStatus, type Friend } from '../utils/plans'
+import { 
+  createPlan, 
+  getPlanById, 
+  addFriendToPlan, 
+  updateFriendStatus, 
+  updateFriendAvailability,
+  type Friend, 
+  type FriendStatus, 
+  type FriendAvailability 
+} from '../utils/plans'
 import { NotFound } from './NotFound'
 
 function OrganizerInfo({ event }: { event: EbEvent }) {
@@ -102,9 +111,11 @@ export function EventPage() {
       const existingPlan = getPlanById(incomingPlanId)
       if (existingPlan) {
         setPlanId(existingPlan.id)
-        const normalizedFriends: Friend[] = existingPlan.friends.map((f) =>
-          typeof f === 'string' ? { name: f, status: 'Pending' } : f
-        )
+        const normalizedFriends: Friend[] = existingPlan.friends.map((f: any) => ({
+          name: typeof f === 'string' ? f : f.name,
+          status: f.status || 'Pending',
+          availability: f.availability || 'Unknown',
+        }))
         setFriends(normalizedFriends)
         setPlanCreated(true)
       }
@@ -116,21 +127,38 @@ export function EventPage() {
     if (!planId || !friendInput.trim()) return
     const updated = addFriendToPlan(planId, friendInput)
     if (updated) {
-      const normalizedFriends: Friend[] = updated.friends.map((f) =>
-        typeof f === 'string' ? { name: f, status: 'Pending' } : f
-      )
+      const normalizedFriends: Friend[] = updated.friends.map((f: any) => ({
+        name: typeof f === 'string' ? f : f.name,
+        status: f.status || 'Pending',
+        availability: f.availability || 'Unknown',
+      }))
       setFriends(normalizedFriends)
       setFriendInput('')
     }
   }
 
-  const handleStatusChange = (index: number, status: 'Going' | 'Interested' | 'Pending') => {
+  const handleStatusChange = (index: number, status: FriendStatus) => {
     if (!planId) return
     const updated = updateFriendStatus(planId, index, status)
     if (updated) {
-      const normalizedFriends: Friend[] = updated.friends.map((f) =>
-        typeof f === 'string' ? { name: f, status: 'Pending' } : f
-      )
+      const normalizedFriends: Friend[] = updated.friends.map((f: any) => ({
+        name: typeof f === 'string' ? f : f.name,
+        status: f.status || 'Pending',
+        availability: f.availability || 'Unknown',
+      }))
+      setFriends(normalizedFriends)
+    }
+  }
+
+  const handleAvailabilityChange = (index: number, availability: FriendAvailability) => {
+    if (!planId) return
+    const updated = updateFriendAvailability(planId, index, availability)
+    if (updated) {
+      const normalizedFriends: Friend[] = updated.friends.map((f: any) => ({
+        name: typeof f === 'string' ? f : f.name,
+        status: f.status || 'Pending',
+        availability: f.availability || 'Unknown',
+      }))
       setFriends(normalizedFriends)
     }
   }
@@ -240,31 +268,56 @@ export function EventPage() {
               Group discount available for eligible group bookings.
             </p>
 
-            {/* Friends & Status Response Section (P0 Requirement) */}
+            {/* Friends, Interest & Availability Section (P0 Requirements) */}
             <div className="mt-6 border-t pt-4">
               <h3 className="text-sm font-semibold text-eb-ink">Friends in this plan ({friends.length})</h3>
               {friends.length > 0 ? (
-                <ul className="mt-2 space-y-2">
+                <ul className="mt-2 space-y-3">
                   {friends.map((friend, idx) => (
-                    <li key={idx} className="flex items-center justify-between text-sm bg-gray-50 px-3 py-2 rounded">
-                      <span className="font-medium text-eb-ink">{friend.name}</span>
-                      <div className="flex items-center gap-2">
-                        <span className={`text-xs px-2 py-0.5 rounded font-semibold ${
-                          friend.status === 'Going' ? 'bg-green-100 text-green-800' :
-                          friend.status === 'Interested' ? 'bg-blue-100 text-blue-800' :
-                          'bg-yellow-100 text-yellow-800'
-                        }`}>
-                          {friend.status}
-                        </span>
-                        <select
-                          value={friend.status}
-                          onChange={(e) => handleStatusChange(idx, e.target.value as any)}
-                          className="text-xs border rounded px-1 py-1 bg-white"
-                        >
-                          <option value="Pending">Pending</option>
-                          <option value="Interested">Interested</option>
-                          <option value="Going">Going</option>
-                        </select>
+                    <li key={idx} className="text-sm bg-gray-50 p-3 rounded space-y-2">
+                      <div className="font-medium text-eb-ink">{friend.name}</div>
+                      <div className="flex flex-wrap items-center justify-between gap-2 text-xs">
+                        {/* Interest Response */}
+                        <div className="flex items-center gap-1.5">
+                          <span className="text-gray-500">Interest:</span>
+                          <span className={`px-2 py-0.5 rounded font-semibold ${
+                            friend.status === 'Going' ? 'bg-green-100 text-green-800' :
+                            friend.status === 'Interested' ? 'bg-blue-100 text-blue-800' :
+                            'bg-yellow-100 text-yellow-800'
+                          }`}>
+                            {friend.status}
+                          </span>
+                          <select
+                            value={friend.status}
+                            onChange={(e) => handleStatusChange(idx, e.target.value as FriendStatus)}
+                            className="border rounded px-1 py-0.5 bg-white"
+                          >
+                            <option value="Pending">Pending</option>
+                            <option value="Interested">Interested</option>
+                            <option value="Going">Going</option>
+                          </select>
+                        </div>
+
+                        {/* Availability Response */}
+                        <div className="flex items-center gap-1.5">
+                          <span className="text-gray-500">Availability:</span>
+                          <span className={`px-2 py-0.5 rounded font-semibold ${
+                            friend.availability === 'Available' ? 'bg-emerald-100 text-emerald-800' :
+                            friend.availability === 'Busy' ? 'bg-rose-100 text-rose-800' :
+                            'bg-gray-200 text-gray-700'
+                          }`}>
+                            {friend.availability}
+                          </span>
+                          <select
+                            value={friend.availability}
+                            onChange={(e) => handleAvailabilityChange(idx, e.target.value as FriendAvailability)}
+                            className="border rounded px-1 py-0.5 bg-white"
+                          >
+                            <option value="Unknown">Unknown</option>
+                            <option value="Available">Available</option>
+                            <option value="Busy">Busy</option>
+                          </select>
+                        </div>
                       </div>
                     </li>
                   ))}
